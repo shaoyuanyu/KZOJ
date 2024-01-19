@@ -34,3 +34,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### test code ###
+/vue-app/
+
+### security ###
