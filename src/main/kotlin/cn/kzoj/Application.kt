@@ -1,6 +1,7 @@
 package cn.kzoj
 
 import cn.kzoj.plugins.*
+import cn.kzoj.routing.configureRouting
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
