@@ -21,7 +21,7 @@ interface Problem: Entity<Problem> {
     /**
      * 编号
      */
-    var problem_id: String
+    var problemId: String
 
     /**
      * 标题
@@ -37,37 +37,37 @@ interface Problem: Entity<Problem> {
      * 类型，如ACM/OI/...
      */
     // TODO:实现type支持自定义增删改
-    var problem_type: Int
+    var problemType: Int
 
     /**
      * 时间限制，单位ms
      */
-    var time_limit: Int
+    var timeLimit: Int
 
     /**
      * 空间限制，单位mb
      */
-    var memory_limit: Int
+    var memoryLimit: Int
 
     /**
      * 栈限制，单位mb
      */
-    var stack_limit: Int
+    var stackLimit: Int
 
     /**
      * 题目描述
      */
-    var problem_description: String
+    var problemDescription: String
 
     /**
      * 输入描述
      */
-    var input_description: String
+    var inputDescription: String
 
     /**
      * 输出描述
      */
-    var output_description: String
+    var outputDescription: String
 
     /**
      * 题面样例
@@ -78,14 +78,14 @@ interface Problem: Entity<Problem> {
     /**
      * 是否为vj判题
      */
-    var is_remote_judge: Boolean
+    var isRemoteJudge: Boolean
 
     /**
      * 题目来源
      *
      * vj判题时例如：HDU-1000的链接
      */
-    var problem_source: String
+    var problemSource: String
 
     /**
      * 题目难度
@@ -106,75 +106,76 @@ interface Problem: Entity<Problem> {
     /**
      * 当该题目为oi题目时的分数
      */
-    var oi_score: Int
+    var oiScore: Int
 
     /**
      * 该题目对应的相关提交代码，用户是否可用分享
      */
-    var is_code_sharable: Boolean
+    var isCodeSharable: Boolean
 
     /**
      * 判题模式，如default/spj/interactive/...
      */
-    var judge_mode: String
+    var judgeMode: String
 
     /**
      * 判例模式，如default/subtask_lowest/subtask_average/...
      */
-    var judge_case_mode: String
+    var judgeCaseMode: String
 
     /**
      * 特判代码
      */
-    var spj_code: String?
+    var spjCode: String?
 
     /**
      * 特判语言
      */
-    var spj_language: String?
+    var spjLanguage: String?
 
     /**
      * 是否默认去除用户代码的每行末尾空白符
      */
-    var remove_end_blank_char: Boolean
+    var removeEndBlankChar: Boolean
 
     /**
      * 是否默认开启该题目的测试样例结果查看
      */
-    var open_case_result: Boolean
+    var openCaseResult: Boolean
 
     /**
      * 题目测试数据是否是上传的
      */
-    var is_case_uploaded: Boolean
+    var isCaseUploaded: Boolean
 
     /**
      * 测试数据的版本
      */
-    var case_version: String
+    var caseVersion: String
 
     /**
      * 修改题目的用户的用户名
      */
-    var last_modified_by_user: String
+    var lastModifiedByUser: String
 
     /**
      * 是否为团队内的题目
      */
-    var is_in_group: Boolean
+    // TODO:移除团队模式
+    var isInGroup: Boolean
 
     /**
      * 团队id
      */
-    var group_id: Int?
+    var groupId: Int?
 
     /**
      * 创建日期
      */
-    var date_created: LocalDateTime
+    var dateCreated: LocalDateTime
 
     /**
      * 修改日期
      */
-    var date_last_modified: LocalDateTime
+    var dateLastModified: LocalDateTime
 }
