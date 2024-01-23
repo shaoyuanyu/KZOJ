@@ -4,6 +4,7 @@ import cn.kzoj.data.DatabaseProvider
 import cn.kzoj.data.problem.ProblemDAO
 import cn.kzoj.data.problem.toProblemDetail
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -16,12 +17,15 @@ fun Application.problemRoutes() {
 }
 
 fun Route.getProblem() {
-    get("/{id}") {
+    get("/get/{id}") {
         val id = this.context.parameters["id"].toString()
 
-        call.respond(
-            ProblemDAO(DatabaseProvider.database).getProblemByProblemId(id)
-                ?.toProblemDetail() ?: "null"
-        )
+        with (ProblemDAO(DatabaseProvider.database).getProblemByProblemId(id)) {
+            if (this != null) {
+                call.respond(this.toProblemDetail())
+            } else {
+                throw NotFoundException("Problem with id $id not found.")
+            }
+        }
     }
 }
