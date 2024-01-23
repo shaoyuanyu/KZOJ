@@ -1,7 +1,8 @@
 package cn.kzoj.data.problem
 
-import java.time.LocalDateTime
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ProblemDetail(
     /**
      * 编号
@@ -17,6 +18,16 @@ data class ProblemDetail(
      * 作者
      */
     var author: String,
+
+    /**
+     * 创建者
+     */
+    var createdByUser: String,
+
+    /**
+     * 修改题目的用户的用户名
+     */
+    var lastModifiedByUser: String,
 
     /**
      * 类型，如ACM/OI/...
@@ -88,12 +99,12 @@ data class ProblemDetail(
     /**
      * 创建日期
      */
-    var dateCreated: LocalDateTime,
+    var dateCreated: String,
 
     /**
      * 修改日期
      */
-    var dateLastModified: LocalDateTime,
+    var dateLastModified: String,
 )
 
 fun Problem.toProblemDetail(): ProblemDetail {
@@ -101,6 +112,8 @@ fun Problem.toProblemDetail(): ProblemDetail {
         problemId = this.problemId,
         title = this.title,
         author = this.author,
+        createdByUser = this.createdByUser,
+        lastModifiedByUser = this.lastModifiedByUser,
         problemType = this.problemType,
         timeLimit = this.timeLimit,
         memoryLimit = this.memoryLimit,
@@ -114,7 +127,7 @@ fun Problem.toProblemDetail(): ProblemDetail {
         difficulty = this.difficulty,
         hint = this.hint,
         oiScore = this.oiScore,
-        dateCreated = this.dateCreated,
-        dateLastModified = this.dateLastModified
+        dateCreated = this.dateCreated.toString(),
+        dateLastModified = this.dateLastModified.toString(),
     )
 }

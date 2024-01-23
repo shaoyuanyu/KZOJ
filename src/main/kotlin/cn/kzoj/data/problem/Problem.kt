@@ -34,6 +34,18 @@ interface Problem: Entity<Problem> {
     var author: String
 
     /**
+     * 创建者
+     */
+    // TODO:类型未来改为User
+    var createdByUser: String
+
+    /**
+     * 修改题目的用户的用户名
+     */
+    // TODO:类型未来改为User
+    var lastModifiedByUser: String
+
+    /**
      * 类型，如ACM/OI/...
      */
     // TODO:实现type支持自定义增删改
@@ -154,11 +166,6 @@ interface Problem: Entity<Problem> {
     var caseVersion: String
 
     /**
-     * 修改题目的用户的用户名
-     */
-    var lastModifiedByUser: String
-
-    /**
      * 是否为团队内的题目
      */
     // TODO:移除团队模式
@@ -178,4 +185,40 @@ interface Problem: Entity<Problem> {
      * 修改日期
      */
     var dateLastModified: LocalDateTime
+}
+
+val problemExample = Problem {
+    problemId = "T001"
+    title = "测试Test"
+    author = "yusy"
+    createdByUser = "yusy"
+    lastModifiedByUser = "yusy"
+    problemType = 0
+    timeLimit = 100
+    memoryLimit = 256
+    stackLimit = 128
+    problemDescription = "描述"
+    inputDescription = "输入"
+    outputDescription = "输出"
+    examples = "样例"
+    isRemoteJudge = true
+    problemSource = "测试"
+    difficulty = 0
+    hint = "测试"
+    authority = "PUBLIC"
+    authority = "PUBLIC"
+    oiScore = 100
+    isCodeSharable = true
+    judgeMode = "default"
+    judgeCaseMode = "default"
+    spjCode = null
+    spjLanguage = null
+    removeEndBlankChar = true
+    openCaseResult = true
+    isCaseUploaded = true
+    caseVersion = "1.0.0"
+    isInGroup = false
+    groupId = null
+    dateCreated = LocalDateTime.of(2024, 1, 22, 3, 11, 55)
+    dateLastModified = LocalDateTime.of(2024, 1, 22, 3, 11, 55)
 }

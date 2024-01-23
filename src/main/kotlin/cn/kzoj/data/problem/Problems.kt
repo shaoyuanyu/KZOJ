@@ -9,6 +9,8 @@ object Problems : Table<Problem>("problem") {
     val problem_id = text(ProblemTableColumn.PROBLEM_ID).bindTo { it.problemId }
     val title = text(ProblemTableColumn.TITLE).bindTo { it.title }
     val author = text(ProblemTableColumn.AUTHOR).bindTo { it.author }
+    val created_by_user = text(ProblemTableColumn.CREATED_BY_USER).bindTo { it.createdByUser }
+    val last_modified_by_user = text(ProblemTableColumn.LAST_MODIFIED_BY_USER).bindTo { it.lastModifiedByUser }
     val problem_type = int(ProblemTableColumn.PROBLEM_TYPE).bindTo { it.problemType }
     val time_limit = int(ProblemTableColumn.TIME_LIMIT).bindTo { it.timeLimit }
     val memory_limit = int(ProblemTableColumn.MEMORY_LIMIT).bindTo { it.memoryLimit }
@@ -34,7 +36,6 @@ object Problems : Table<Problem>("problem") {
     val open_case_result = boolean(ProblemTableColumn.OPEN_CASE_RESULT).bindTo { it.openCaseResult }
     val is_case_uploaded = boolean(ProblemTableColumn.IS_CASE_UPLOADED).bindTo { it.isCaseUploaded }
     val case_version = text(ProblemTableColumn.CASE_VERSION).bindTo { it.caseVersion }
-    val last_modified_by_user = text(ProblemTableColumn.LAST_MODIFIED_BY_USER).bindTo { it.lastModifiedByUser }
     val is_in_group = boolean(ProblemTableColumn.IS_IN_GROUP).bindTo { it.isInGroup }
     val group_id = int(ProblemTableColumn.GROUP_ID).bindTo { it.groupId }
     val date_created = datetime(ProblemTableColumn.DATE_CREATED).bindTo { it.dateCreated }
@@ -48,6 +49,8 @@ object ProblemTableColumn {
     const val PROBLEM_ID = "problem_id"
     const val TITLE = "title"
     const val AUTHOR = "author"
+    const val CREATED_BY_USER = "created_by_user"
+    const val LAST_MODIFIED_BY_USER = "last_modified_by_user"
     const val PROBLEM_TYPE = "problem_type"
     const val TIME_LIMIT = "time_limit"
     const val MEMORY_LIMIT = "memory_limit"
@@ -73,7 +76,6 @@ object ProblemTableColumn {
     const val OPEN_CASE_RESULT = "open_case_result"
     const val IS_CASE_UPLOADED = "is_case_uploaded"
     const val CASE_VERSION = "case_version"
-    const val LAST_MODIFIED_BY_USER = "last_modified_by_user"
     const val IS_IN_GROUP = "is_in_group"
     const val GROUP_ID = "group_id"
     const val DATE_CREATED = "date_created"
