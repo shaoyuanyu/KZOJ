@@ -27,13 +27,14 @@ repositories {
 dependencies {
     // ktor
     implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-auth-jvm")
+    implementation("io.ktor:ktor-server-auth-jvm") // auth
     implementation("io.ktor:ktor-client-core-jvm")
     implementation("io.ktor:ktor-client-apache-jvm")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm") // auth jwt
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
-    implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
+    implementation("io.ktor:ktor-server-netty-jvm") // netty
+    implementation("io.ktor:ktor-server-cors-jvm") // cors
     testImplementation("io.ktor:ktor-server-tests-jvm")
 
     // ktorm
