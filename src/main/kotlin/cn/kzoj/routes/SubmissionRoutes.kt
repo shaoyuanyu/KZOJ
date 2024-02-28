@@ -1,11 +1,11 @@
-package cn.kzoj.routing
+package cn.kzoj.routes
 
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
-fun Application.userRoutes() {
+fun Application.submissionRoutes() {
     routing {
-        route(RoutePath.USER) {
+        route("/submission") {
         }
     }
 }

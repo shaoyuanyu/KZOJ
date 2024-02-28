@@ -1,7 +1,6 @@
 package cn.kzoj
 
 import cn.kzoj.plugins.*
-import cn.kzoj.routing.configureRouting
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
@@ -9,7 +8,11 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    configureCORS()
     configureSecurity()
     configureSerialization()
-    configureRouting()
+
+    val database = configureDatabase()
+    val problemServer = configureProblemServer(database)
+    configureRouting(problemServer)
 }

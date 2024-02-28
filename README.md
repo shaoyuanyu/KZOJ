@@ -1,7 +1,13 @@
 # KZOJ
 
-## 技术选型
-- 前端框架： Vue3(组合式API) + TypeScript + Vite
-- 前端UI： Acro.design
-- 后端框架： Kotlin + Ktor
-- 数据库： Ktorm（待JetBrains的Exposed发布正式版本后可考虑转向Exposed）
+## 环境配置
+
+### 1. 安装MySQL并启动
+
+### 2. 配置环境变量
+```
+DB_DRIVER = com.mysql.cj.jdbc.Driver;
+DB_PASSWORD = MySQL密码;
+DB_URL = jdbc:mysql://localhost:MySQL端口/数据库名称;
+DB_USER = MySQL用户名
+```
