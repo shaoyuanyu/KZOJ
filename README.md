@@ -11,3 +11,6 @@ DB_PASSWORD = MySQL密码;
 DB_URL = jdbc:mysql://localhost:MySQL端口/数据库名称;
 DB_USER = MySQL用户名
 ```
+
+### 3. 配置前端
+在项目根目录下创建 `vue-app` 文件夹，将静态编译的vue前端放入其中。
