@@ -1,10 +1,11 @@
 package cn.kzoj.data.problem
 
-import cn.kzoj.data.user.User
+import java.time.LocalDateTime
 
 data class JudgeRequest(
     val problemId: String,
     val userId: String,
-    val judgeId: String,
-    val submittedCode: String,
+    val judgeId: String? = null,
+    val submitTime: LocalDateTime,
+    val userAnswer: String,
 )
