@@ -3,6 +3,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val ktorm_version: String by project
 val mysql_connector_version: String by project
+val datetime_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -25,17 +26,20 @@ repositories {
 }
 
 dependencies {
-    // ktor
+    // ktor server
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-auth-jvm") // auth
-    implementation("io.ktor:ktor-client-core-jvm")
-    implementation("io.ktor:ktor-client-apache-jvm")
     implementation("io.ktor:ktor-server-auth-jwt-jvm") // auth jwt
-    implementation("io.ktor:ktor-server-content-negotiation-jvm")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm") // content negotiation
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
     implementation("io.ktor:ktor-server-netty-jvm") // netty
     implementation("io.ktor:ktor-server-cors-jvm") // cors
-    testImplementation("io.ktor:ktor-server-tests-jvm")
+    implementation("io.ktor:ktor-server-resources-jvm") // resources
+    testImplementation("io.ktor:ktor-server-tests-jvm") // tests
+
+    // ktor client
+    implementation("io.ktor:ktor-client-core-jvm")
+    implementation("io.ktor:ktor-client-apache-jvm")
 
     // ktorm
     implementation("org.ktorm:ktorm-core:$ktorm_version")
@@ -45,6 +49,9 @@ dependencies {
 
     // logback
     implementation("ch.qos.logback:logback-classic:$logback_version")
+
+    // datetime
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$datetime_version")
 
     // kotlin test junit
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
