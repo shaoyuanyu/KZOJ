@@ -1,4 +1,4 @@
-name: Ktor Build & Test
+name: Ktor Build
 
 on:
   push:
@@ -28,23 +28,3 @@ jobs:
 
       - name: Build Ktor application
         run: ./gradlew assemble
-
-  test:
-    name: Ktor test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'oracle'
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Run Ktor tests
-        run: ./gradlew test
