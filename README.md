@@ -1,4 +1,12 @@
 # KZOJ
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9-informational)](https://kotlinlang.org/)
+[![Ktor](https://img.shields.io/badge/Ktor-2.3-informational)](https://ktor.io/)
+[![Ktorm](https://img.shields.io/badge/Ktorm-3.6-informational)](https://www.ktorm.org/)
+[![go-judge](https://img.shields.io/badge/goJudge-1.8.2-informational)](https://github.com/criyle/go-judge/)
+
+本项目为KZOJ的后端，采用Kotlin语言的Ktor框架，判题模块来自开源项目[go-judge](https://github.com/criyle/go-judge)。
+
+前端部分请移步[CSOJ-frontend](https://github.com/shaoyuanyu/CSOJ-frontend)。
 
 ## 环境配置
 
