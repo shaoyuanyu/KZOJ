@@ -1,7 +1,7 @@
 package cn.kzoj.routes
 
 import cn.kzoj.core.problemserver.ProblemServer
-import cn.kzoj.models.SubmitRequest
+import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.data.problem.toProblemDetail
 import io.ktor.server.application.*
 import io.ktor.server.request.*

@@ -1,4 +1,4 @@
-package cn.kzoj.models
+package cn.kzoj.models.submit
 
 import cn.kzoj.common.JudgeStatus
 import kotlinx.serialization.Serializable

@@ -1,4 +1,4 @@
-package cn.kzoj.models
+package cn.kzoj.models.judge
 
 import cn.kzoj.common.JudgeStatus
 import kotlinx.datetime.Instant

@@ -2,14 +2,19 @@ package cn.kzoj.core.problemserver
 
 import cn.kzoj.core.judge.Judge
 import cn.kzoj.data.problem.*
-import cn.kzoj.models.SubmitRequest
-import cn.kzoj.models.JudgeResult
-import cn.kzoj.models.SubmitReceipt
+import cn.kzoj.models.submit.SubmitRequest
+import cn.kzoj.models.judge.JudgeResult
+import cn.kzoj.models.submit.SubmitReceipt
 import io.ktor.server.plugins.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.ktorm.database.Database
 
-class ProblemServer(private val database: Database) {
-    private val judge = Judge()
+class ProblemServer(
+    private val database: Database,
+    goJudgeUrl: String
+) {
+    private val judge = Judge(goJudgeUrl)
 
     fun giveProblemExample(): Problem =
         problemExample
@@ -26,4 +31,10 @@ class ProblemServer(private val database: Database) {
 
     fun queryJudgeResult(judgeId: String): JudgeResult =
         judge.queryJudgeResult(judgeId)
+
+    fun doJudgeTest() {
+        GlobalScope.launch {
+            judge.doJudgeTest()
+        }
+    }
 }

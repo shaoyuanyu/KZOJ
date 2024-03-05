@@ -31,7 +31,6 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jvm") // auth
     implementation("io.ktor:ktor-server-auth-jwt-jvm") // auth jwt
     implementation("io.ktor:ktor-server-content-negotiation-jvm") // content negotiation
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
     implementation("io.ktor:ktor-server-netty-jvm") // netty
     implementation("io.ktor:ktor-server-cors-jvm") // cors
     implementation("io.ktor:ktor-server-resources-jvm") // resources
@@ -40,6 +39,10 @@ dependencies {
     // ktor client
     implementation("io.ktor:ktor-client-core-jvm")
     implementation("io.ktor:ktor-client-apache-jvm")
+    implementation("io.ktor:ktor-client-content-negotiation-jvm")
+
+    // ktor
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
 
     // ktorm
     implementation("org.ktorm:ktorm-core:$ktorm_version")
