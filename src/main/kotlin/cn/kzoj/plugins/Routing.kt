@@ -1,7 +1,9 @@
 package cn.kzoj.plugins
 
 import cn.kzoj.core.problemserver.ProblemServer
-import cn.kzoj.routes.routesGraph
+import cn.kzoj.routes.problemRoutes
+import cn.kzoj.routes.submissionRoutes
+import cn.kzoj.routes.userRoutes
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -14,5 +16,7 @@ fun Application.configureRouting(problemServer: ProblemServer) {
         }
     }
 
-    routesGraph(problemServer)
+    userRoutes() // "/user"
+    problemRoutes(problemServer) // "/problem"
+    submissionRoutes() // "/submission"
 }
