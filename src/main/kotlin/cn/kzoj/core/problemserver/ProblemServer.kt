@@ -6,6 +6,7 @@ import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.submit.SubmitReceipt
 import io.ktor.server.plugins.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.ktorm.database.Database
@@ -16,6 +17,7 @@ class ProblemServer(
 ) {
     private val judge = Judge(goJudgeUrl)
 
+    @Suppress("unused")
     fun giveProblemExample(): Problem =
         problemExample
 
@@ -32,6 +34,8 @@ class ProblemServer(
     fun queryJudgeResult(judgeId: String): JudgeResult =
         judge.queryJudgeResult(judgeId)
 
+    @OptIn(DelicateCoroutinesApi::class)
+    @Suppress("unused")
     fun doJudgeTest() {
         GlobalScope.launch {
             judge.doJudgeTest()

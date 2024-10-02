@@ -1,12 +1,13 @@
 package cn.kzoj.core.judge
 
 import cn.kzoj.common.JudgeStatus
-import cn.kzoj.models.gojudge.GoJudgeRequestExample
+import cn.kzoj.models.gojudge.*
 import cn.kzoj.models.judge.JudgeRequest
 import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.submit.SubmitReceipt
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -30,7 +31,7 @@ class Judge(
     // 判题结果列表(待查询的)
     private var judgeResults: ArrayList<JudgeResult> = arrayListOf()
     //
-    private val goJudgeClient = HttpClient() {
+    private val goJudgeClient = HttpClient {
         install(ContentNegotiation) {
             json()
         }
@@ -65,13 +66,43 @@ class Judge(
         }
     }
 
-    private fun doJudge(judgeRequest: JudgeRequest): JudgeResult {
-        // test code
+    private suspend fun doJudge(judgeRequest: JudgeRequest): JudgeResult {
+        val goJudgeRequest = if (judgeRequest.submitRequest.lang == "c") {
+            GoJudgeRequest(
+                cmd = listOf(
+                    GoJudgeCommand(
+                        args = listOf("/usr/bin/g++", "a.cc", "-o", "a"),
+                        env = listOf("PATH=/usr/bin:/bin"),
+                        files = listOf(
+                            File.MemoryFile(content = ""),
+                            File.Collector(name = "stdout", max = 10240),
+                            File.Collector(name = "stderr", max = 10240),
+                        ),
+                        cpuLimit = 10000000000,
+                        memoryLimit = 104857600,
+                        procLimit = 50,
+                        copyIn = mapOf(
+                            "a.cc" to CopyIn.MemoryFile(content = judgeRequest.submitRequest.submittedCode),
+                        ),
+                        copyOut = listOf("stdout", "stderr"),
+                        copyOutCached = listOf("a"),
+                    )
+                )
+            )
+        } else {
+            GoJudgeRequestExample   // TODO: 其他语言待完善
+        }
+
+        val goJudgeResult = goJudgeClient.post("$goJudgeUrl/run") {
+            contentType(ContentType.Application.Json)
+            setBody(goJudgeRequest)
+        }
+        val goJudgeResultBody: GoJudgeResult = goJudgeResult.body<List<GoJudgeResult>>()[0]
+
         return JudgeResult(
             judgeId = judgeRequest.judgeId,
             status = JudgeStatus.Finished,
-            accept = true,
-            evaluationPoint = arrayListOf(true, true, true),
+            accept = (goJudgeResultBody.status == Status.Accepted),
             judgeTime = Clock.System.now()
         )
     }
@@ -81,7 +112,13 @@ class Judge(
             contentType(ContentType.Application.Json)
             setBody(GoJudgeRequestExample)
         }
-        println("\n\n\n$result\n\n\n")
+        val resultBody: List<GoJudgeResult> = result.body()
+
+        if (resultBody[0].status == Status.Accepted) {
+            println("\nAcc")
+        }
+
+        println("\ngoJudge result: $resultBody\n")
     }
 
     fun addJudgeRequest(submitRequest: SubmitRequest): SubmitReceipt {

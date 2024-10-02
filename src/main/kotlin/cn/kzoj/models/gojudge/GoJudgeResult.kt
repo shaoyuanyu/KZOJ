@@ -1,5 +1,6 @@
 package cn.kzoj.models.gojudge
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,7 +13,7 @@ data class GoJudgeResult(
     /**
      * 错误信息
      */
-    val error: String?,
+    val error: String? = null,
 
     /**
      * go-judge返回值
@@ -37,28 +38,30 @@ data class GoJudgeResult(
     /**
      * copyOut指定的文件内容
      */
-    val files: Map<String, String>?,
+    val files: Map<String, String>? = null,
 
     /**
      * copyFileCached指定的文件id
      */
-    val fileIds: Map<String, String>?,
+    val fileIds: Map<String, String>? = null,
 
     /**
      * 文件错误详细信息
      */
-    val fileError: List<FileError>?,
+    val fileError: List<FileError>? = null,
 )
 
+@Suppress("unused")
+@Serializable
 enum class Status {
-    Accepted, // 正常情况
-    MemoryLimitExceeded, // 内存超限
-    TimeLimitExceeded, // 时间超限
-    OutputLimitExceeded, // 输出超限
-    FileError, // 文件错误
-    NonzeroExitStatus, // 非 0 退出值
-    Signalled, // 进程被信号终止
-    InternalError, // 内部错误
+    @SerialName("Accepted")                 Accepted,               // 正常情况
+    @SerialName("Memory Limit Exceeded")    MemoryLimitExceeded,    // 内存超限
+    @SerialName("Time Limit Exceeded")      TimeLimitExceeded,      // 时间超限
+    @SerialName("Output Limit Exceeded")    OutputLimitExceeded,    // 输出超限
+    @SerialName("File Error")               FileError,              // 文件错误
+    @SerialName("Nonzero Exit Status")      NonzeroExitStatus,      // 非 0 退出值
+    @SerialName("Signalled")                Signalled,              // 进程被信号终止
+    @SerialName("Internal Error")           InternalError,          // 内部错误
 }
 
 @Serializable
@@ -76,17 +79,19 @@ data class FileError(
     /**
      * 错误信息
      */
-    val message: String?,
+    val message: String? = null,
 )
 
+@Suppress("unused")
+@Serializable
 enum class FileErrorType {
-    CopyInOpenFile,
-    CopyInCreateFile,
-    CopyInCopyContent,
-    CopyOutOpen,
-    CopyOutNotRegularFile,
-    CopyOutSizeExceeded,
-    CopyOutCreateFile,
-    CopyOutCopyContent,
-    CollectSizeExceeded,
+    @SerialName("CopyInOpenFile")           CopyInOpenFile,
+    @SerialName("CopyInCreateFile")         CopyInCreateFile,
+    @SerialName("CopyInCopyContent")        CopyInCopyContent,
+    @SerialName("CopyOutOpen")              CopyOutOpen,
+    @SerialName("CopyOutNotRegularFile")    CopyOutNotRegularFile,
+    @SerialName("CopyOutSizeExceeded")      CopyOutSizeExceeded,
+    @SerialName("CopyOutCreateFile")        CopyOutCreateFile,
+    @SerialName("CopyOutCopyContent")       CopyOutCopyContent,
+    @SerialName("CollectSizeExceeded")      CollectSizeExceeded,
 }
