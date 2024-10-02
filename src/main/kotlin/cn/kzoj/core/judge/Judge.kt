@@ -12,25 +12,27 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import java.security.MessageDigest
 import java.util.*
 import kotlin.collections.ArrayList
 
-@OptIn(DelicateCoroutinesApi::class)
+@Suppress("OPT_IN_USAGE")
 class Judge(
     private val goJudgeUrl: String
 ) {
     // 待判队列
     private var judgeQueue: Queue<JudgeRequest> = LinkedList()
+
     // 判题结果列表(待查询的)
-    private var judgeResults: ArrayList<JudgeResult> = arrayListOf()
-    //
+    private var judgeResultList: ArrayList<JudgeResult> = arrayListOf()
+
+    // 可销毁的判题结果（包括已取出的或过期的）的id列表
+    private var uselessJudgeResultIdList: ArrayList<String> = arrayListOf()
+
+    // 和GoJudge通信的Ktor客户端
     private val goJudgeClient = HttpClient {
         install(ContentNegotiation) {
             json()
@@ -47,21 +49,29 @@ class Judge(
     private suspend fun worker() {
         while (true) {
             if (judgeQueue.isEmpty()) {
-                if (judgeResults.isEmpty()) {
-                    // 待判队列和判题结果均为空时短暂挂起，减轻服务器负载
+                if (judgeResultList.isEmpty()) {
+                    // 待判队列和判题结果列表均为空时，短暂挂起
                     delay(SLEEP_TIME_SECONDS)
                 } else {
+                    // 判题完成后超过设定时长，仍未查询结果的进行销毁
                     val currentTime = Clock.System.now()
                     val currentTimeZone = TimeZone.currentSystemDefault()
-                    judgeResults.forEach {
+                    judgeResultList.forEach {
                         if (currentTime.periodUntil(it.judgeTime!!, currentTimeZone).minutes >= TIMEOUT_DURATION_MINUTES) {
-                            judgeResults.remove(it)
+                            uselessJudgeResultIdList.add(it.judgeId)
                         }
                     }
                 }
             } else {
                 val nextToJudge = judgeQueue.poll()
-                judgeResults.add(doJudge(nextToJudge))
+                judgeResultList.add(doJudge(nextToJudge))
+            }
+
+            // 销毁无用的判题结果
+            while (uselessJudgeResultIdList.isNotEmpty()) {
+                val uselessJudgeResultId = uselessJudgeResultIdList[0]
+                uselessJudgeResultIdList.removeFirst()
+                judgeResultList.remove(judgeResultList.find { it.judgeId == uselessJudgeResultId })
             }
         }
     }
@@ -143,19 +153,23 @@ class Judge(
     fun queryJudgeStatus(judgeId: String): SubmitReceipt =
         with (judgeQueue.find { it.judgeId == judgeId }) {
             if (this == null) {
-                SubmitReceipt(judgeId = judgeId, status = JudgeStatus.Finished, positionInQueue = 0)
+                if (judgeResultList.find { it.judgeId == judgeId } == null) {
+                    SubmitReceipt(judgeId = judgeId, status = JudgeStatus.NotFound, positionInQueue = 0)
+                } else {
+                    SubmitReceipt(judgeId = judgeId, status = JudgeStatus.Finished, positionInQueue = 0)
+                }
             } else {
                 SubmitReceipt(judgeId = judgeId, status = JudgeStatus.Queueing, positionInQueue = judgeQueue.indexOf(this))
             }
         }
 
     fun queryJudgeResult(judgeId: String): JudgeResult {
-        val result = judgeResults.find { it.judgeId == judgeId }
+        val result = judgeResultList.find { it.judgeId == judgeId }
 
         if (result == null) {
-            return JudgeResult(judgeId = judgeId, status = JudgeStatus.Queueing)
+            return JudgeResult(judgeId = judgeId, status = JudgeStatus.NotFound)
         } else {
-            judgeResults.remove(result)
+            uselessJudgeResultIdList.add(judgeId)
             return result
         }
     }

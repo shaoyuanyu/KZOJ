@@ -4,4 +4,5 @@ enum class JudgeStatus {
     Queueing,
     Judging,
     Finished,
+    NotFound,
 }
