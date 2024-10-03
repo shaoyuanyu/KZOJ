@@ -10,11 +10,9 @@ fun main(args: Array<String>) {
 @Suppress("unused")
 fun Application.module() {
     configureCORS()
-    configureSecurity()
+//    configureSecurity()
     configureSerialization()
     val database = configureDatabase()
     val problemServer = configureProblemServer(database)
     configureRouting(problemServer)
-
-//    problemServer.doJudgeTest()
 }

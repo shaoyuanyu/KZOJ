@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class JudgeResult(
     val judgeId: String,
     val status: JudgeStatus,
-    val accept: Boolean? = null,
-    val evaluationPoint: ArrayList<Boolean>? = null,
+    var accept: Boolean? = null,
+    var evaluationPoint: ArrayList<Boolean>? = null,
     val judgeTime: Instant? = null,
 )
