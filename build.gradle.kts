@@ -1,12 +1,12 @@
 val kotlinVersion: String by project
 val logbackVersion: String by project
-val ktormVersion: String by project
+val exposedVersion: String by project
 val mysqlConnectorVersion: String by project
 val datetimeVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
-    id("io.ktor.plugin") version "2.3.7"
+    id("io.ktor.plugin") version "2.3.12"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
 }
 
@@ -52,8 +52,13 @@ dependencies {
     // ktor
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
 
-    // ktorm
-    implementation("org.ktorm:ktorm-core:$ktormVersion")
+    // exposed
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
 
     // mysql-connector-j
     implementation("com.mysql:mysql-connector-j:$mysqlConnectorVersion")
