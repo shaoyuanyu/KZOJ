@@ -1,6 +1,8 @@
 package cn.kzoj.plugins
 
 import cn.kzoj.data.problem.Problems
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -27,9 +29,21 @@ fun Application.configureDatabase(): Database {
         throw Exception("database password configuration does not exist or is empty.")
     }
 
+    // 配置HiKari
+    val config = HikariConfig().apply {
+        jdbcUrl = url
+        driverClassName = driver
+        username = user
+        this.password = password
+        maximumPoolSize = 6
+        isReadOnly = false
+        transactionIsolation = "TRANSACTION_SERIALIZABLE"
+    }
+    val dataSource = HikariDataSource(config)
+
     // 创建database实例
-    // TODO: 使用连接池，如HikariCP
-    val database = Database.connect(url = url, driver = driver, user = user, password = password)
+    // val database = Database.connect(url = url, driver = driver, user = user, password = password)
+    val database = Database.connect(datasource=dataSource)
 
     // 第一次transaction与数据库建立连接
     // 检查table并创建缺失的，DSL "CREATE TABLE IF NOT EXISTS"

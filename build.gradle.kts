@@ -2,6 +2,7 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 val exposedVersion: String by project
 val mysqlConnectorVersion: String by project
+val hikaricpVersion: String by project
 val datetimeVersion: String by project
 
 plugins {
@@ -62,6 +63,9 @@ dependencies {
 
     // mysql-connector-j
     implementation("com.mysql:mysql-connector-j:$mysqlConnectorVersion")
+
+    // HiKariCP
+    implementation("com.zaxxer:HikariCP:$hikaricpVersion")
 
     // logback
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
