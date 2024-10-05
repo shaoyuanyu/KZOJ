@@ -9,7 +9,6 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     configureCORS()
-//    configureSecurity()
     configureSerialization()
     val database = configureDatabase()
     val problemServer = configureProblemServer(database)

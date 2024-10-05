@@ -2,7 +2,7 @@ package cn.kzoj.plugins
 
 import cn.kzoj.core.problemserver.ProblemServer
 import io.ktor.server.application.*
-import org.ktorm.database.Database
+import org.jetbrains.exposed.sql.Database
 
 fun Application.configureProblemServer(database: Database): ProblemServer =
     ProblemServer(

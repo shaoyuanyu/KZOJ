@@ -2,7 +2,6 @@ package cn.kzoj.routes
 
 import cn.kzoj.core.problemserver.ProblemServer
 import cn.kzoj.models.submit.SubmitRequest
-import cn.kzoj.data.problem.toProblemDetail
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -11,11 +10,18 @@ import io.ktor.server.routing.*
 fun Application.problemRoutes(problemServer: ProblemServer) {
     routing {
         route("/problem") {
+            createProblemTest(problemServer)
             getProblem(problemServer)
             submitProblem(problemServer)
             queryJudgeStatus(problemServer)
             queryJudgeResult(problemServer)
         }
+    }
+}
+
+fun Route.createProblemTest(problemServer: ProblemServer) {
+    post("/create/test") {
+        problemServer.createProblemTest()
     }
 }
 
@@ -30,7 +36,7 @@ fun Route.getProblem(problemServer: ProblemServer) {
     get("/get/{id}") {
         val id = this.context.parameters["id"].toString()
         call.respond(
-            problemServer.giveProblem(id).toProblemDetail()
+            problemServer.giveProblem(id)
         )
     }
 }
