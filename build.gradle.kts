@@ -1,9 +1,8 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-val ktorm_version: String by project
-val mysql_connector_version: String by project
-val datetime_version: String by project
+val kotlinVersion: String by project
+val logbackVersion: String by project
+val ktormVersion: String by project
+val mysqlConnectorVersion: String by project
+val datetimeVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -12,7 +11,7 @@ plugins {
 }
 
 group = "cn.kzoj"
-version = "0.0.1"
+version = "0.0.2"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
@@ -54,17 +53,17 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
 
     // ktorm
-    implementation("org.ktorm:ktorm-core:$ktorm_version")
+    implementation("org.ktorm:ktorm-core:$ktormVersion")
 
     // mysql-connector-j
-    implementation("com.mysql:mysql-connector-j:$mysql_connector_version")
+    implementation("com.mysql:mysql-connector-j:$mysqlConnectorVersion")
 
     // logback
-    implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // datetime
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$datetime_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$datetimeVersion")
 
     // kotlin test junit
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 }
