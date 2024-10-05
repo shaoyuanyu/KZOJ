@@ -21,6 +21,15 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+ktor {
+    fatJar {
+        archiveFileName.set("kzoj.fat.jar")
+    }
+    docker {
+        jreVersion.set(JavaVersion.VERSION_21)
+    }
+}
+
 repositories {
     mavenCentral()
 }

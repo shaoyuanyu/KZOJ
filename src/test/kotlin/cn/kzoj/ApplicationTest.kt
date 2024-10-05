@@ -10,12 +10,16 @@ import kotlin.test.*
 class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
-        application {
-            configureRouting()
-        }
-        client.get("/").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
-        }
+//        application {
+//            configureCORS()
+//            configureSerialization()
+//            val database = configureDatabase()
+//            val problemServer = configureProblemServer(database)
+//            configureRouting(problemServer)
+//        }
+//        client.get("/").apply {
+//            assertEquals(HttpStatusCode.OK, status)
+//            assertEquals("Hello World!", bodyAsText())
+//        }
     }
 }

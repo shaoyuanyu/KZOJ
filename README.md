@@ -8,9 +8,9 @@
 
 前端部分请移步[CSOJ-frontend](https://github.com/shaoyuanyu/CSOJ-frontend)。
 
-## 环境配置
+## 开发环境配置
 
-### 1. 安装MySQL并启动
+### 1. 安装 MySQL 并启动
 
 ### 2. 配置环境变量
 ```
@@ -21,3 +21,32 @@ DB_PASSWORD = MySQL密码;
 
 ### 3. 配置前端
 在项目根目录下创建 `vue-app` 文件夹，将静态编译的vue前端放入其中。
+
+## 生产环境配置
+
+### 1. 安装 Docker Engine & Docker CLI & Docker Compose
+
+### 2. 配置 docker-compose.yml
+```
+services:
+    web:
+        ...
+        environment:
+            HOST: "0.0.0.0"
+            DB_URL: "jdbc:mysql://host.docker.internal:MySQL端口/数据库名称"
+            DB_USER: "MySQL用户名"
+            DB_PASSWORD: "MySQL密码"
+        ...
+    db:
+        ...
+        environment:
+            MYSQL_ROOT_PASSWORD: "MySQL密码"
+        ports:
+            - "host机MySQL端口（与web.environment.DB_URL中一致）:3306"
+        ...
+```
+
+### 3. 运行容器
+```
+docker compose -p kzoj up -d
+```
