@@ -1,12 +1,13 @@
 val kotlinVersion: String by project
 val logbackVersion: String by project
-val ktormVersion: String by project
+val exposedVersion: String by project
 val mysqlConnectorVersion: String by project
+val hikaricpVersion: String by project
 val datetimeVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
-    id("io.ktor.plugin") version "2.3.7"
+    id("io.ktor.plugin") version "2.3.12"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
 }
 
@@ -34,29 +35,36 @@ repositories {
 }
 
 dependencies {
-    // ktor server
+    // ktor-server
+    implementation("io.ktor:ktor-server-auth-jvm")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm")
     implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-auth-jvm") // auth
-    implementation("io.ktor:ktor-server-auth-jwt-jvm") // auth jwt
-    implementation("io.ktor:ktor-server-content-negotiation-jvm") // content negotiation
-    implementation("io.ktor:ktor-server-netty-jvm") // netty
-    implementation("io.ktor:ktor-server-cors-jvm") // cors
-    implementation("io.ktor:ktor-server-resources-jvm") // resources
-    testImplementation("io.ktor:ktor-server-tests-jvm") // tests
+    implementation("io.ktor:ktor-server-cors-jvm")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm")
+    implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-resources-jvm")
+    implementation("io.ktor:ktor-server-status-pages")
+    testImplementation("io.ktor:ktor-server-tests-jvm")
 
     // ktor client
     implementation("io.ktor:ktor-client-core-jvm")
     implementation("io.ktor:ktor-client-apache-jvm")
     implementation("io.ktor:ktor-client-content-negotiation-jvm")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 
-    // ktor
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
-
-    // ktorm
-    implementation("org.ktorm:ktorm-core:$ktormVersion")
+    // exposed
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
 
     // mysql-connector-j
     implementation("com.mysql:mysql-connector-j:$mysqlConnectorVersion")
+
+    // HiKariCP
+    implementation("com.zaxxer:HikariCP:$hikaricpVersion")
 
     // logback
     implementation("ch.qos.logback:logback-classic:$logbackVersion")

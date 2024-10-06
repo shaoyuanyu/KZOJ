@@ -1,8 +1,9 @@
 package cn.kzoj.routes
 
 import cn.kzoj.core.problemserver.ProblemServer
+import cn.kzoj.models.problem.Problem
 import cn.kzoj.models.submit.SubmitRequest
-import cn.kzoj.data.problem.toProblemDetail
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -11,7 +12,14 @@ import io.ktor.server.routing.*
 fun Application.problemRoutes(problemServer: ProblemServer) {
     routing {
         route("/problem") {
-            getProblem(problemServer)
+            // CRUD
+            createProblem(problemServer)
+            deleteProblem(problemServer)
+            updateProblem(problemServer)
+            queryProblemById(problemServer)
+            queryProblemByTitle(problemServer)
+
+            // 判题
             submitProblem(problemServer)
             queryJudgeStatus(problemServer)
             queryJudgeResult(problemServer)
@@ -20,17 +28,82 @@ fun Application.problemRoutes(problemServer: ProblemServer) {
 }
 
 /**
- * 获取题目
+ * 创建题目
  *
- * 接收: String
+ * 接收题目：Problem
  *
- * 返回: ProblemDetail
+ * 返回id：Int
  */
-fun Route.getProblem(problemServer: ProblemServer) {
+fun Route.createProblem(problemServer: ProblemServer) {
+    post("/create") {
+        val newProblem = call.receive<Problem>()
+
+        problemServer.createProblem(newProblem)
+
+        call.response.status(HttpStatusCode.Created)
+    }
+}
+
+/**
+ * 删除题目
+ *
+ * 接收id：Int
+ */
+fun Route.deleteProblem(problemServer: ProblemServer) {
+    delete("/{id}") {
+        val id = this.context.parameters["id"].toString().toIntOrNull()
+
+        problemServer.deleteProblem(id)
+
+        call.response.status(HttpStatusCode.OK)
+    }
+}
+
+/**
+ * 更新题目
+ *
+ * 接收题目: Problem
+ */
+fun Route.updateProblem(problemServer: ProblemServer) {
+    put("/update") {
+        val newProblem = call.receive<Problem>()
+
+        problemServer.updateProblem(newProblem)
+
+        call.response.status(HttpStatusCode.OK)
+    }
+}
+
+/**
+ * 根据id查询题目
+ *
+ * 接收id: Int
+ *
+ * 返回题目: Problem
+ */
+fun Route.queryProblemById(problemServer: ProblemServer) {
     get("/get/{id}") {
-        val id = this.context.parameters["id"].toString()
+        val id = this.context.parameters["id"].toString().toIntOrNull()
+
         call.respond(
-            problemServer.giveProblem(id).toProblemDetail()
+            problemServer.queryProblemById(id)
+        )
+    }
+}
+
+/**
+ * 根据标题查询题目
+ *
+ * 接收标题（关键字）：String
+ *
+ * 返回题目列表：List<Problem>
+ */
+fun Route.queryProblemByTitle(problemServer: ProblemServer) {
+    get("/queryByTitle/{title}") {
+        val title = this.context.parameters["title"].toString()
+
+        call.respond(
+            problemServer.queryProblemByTitle(title)
         )
     }
 }
@@ -38,9 +111,9 @@ fun Route.getProblem(problemServer: ProblemServer) {
 /**
  * 提交
  *
- * 接收: SubmitRequest
+ * 接收提交请求: SubmitRequest
  *
- * 返回: SubmitReceipt
+ * 返回提交收据: SubmitReceipt
  */
 fun Route.submitProblem(problemServer: ProblemServer) {
     post("/submit") {
@@ -55,9 +128,9 @@ fun Route.submitProblem(problemServer: ProblemServer) {
 /**
  * 查询判题状态
  *
- * 接收: String
+ * 接收judgeId: String
  *
- * 返回: SubmitReceipt
+ * 返回提交收据: SubmitReceipt
  */
 fun Route.queryJudgeStatus(problemServer: ProblemServer) {
     get("/judgeStatus") {
@@ -72,9 +145,9 @@ fun Route.queryJudgeStatus(problemServer: ProblemServer) {
 /**
  * 查询判题结果
  *
- * 接收: String
+ * 接收JudgeId: String
  *
- * 返回: JudgeResult
+ * 返回判题结果: JudgeResult
  */
 fun Route.queryJudgeResult(problemServer: ProblemServer) {
     get("/judgeResult") {
