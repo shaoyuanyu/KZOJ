@@ -7,8 +7,6 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object Problems: IntIdTable("exposed_problem") {
 
-    val problemId: Column<String> = varchar("problemId", 10).uniqueIndex()
-
     val title: Column<String> = varchar("title", 100).index()
 
     val author: Column<String> = varchar("author", 100)

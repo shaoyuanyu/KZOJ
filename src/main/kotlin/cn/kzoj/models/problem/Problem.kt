@@ -1,4 +1,4 @@
-package cn.kzoj.data.problem
+package cn.kzoj.models.problem
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -7,8 +7,8 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProblemExposed(
-    val problemId: String,
+data class Problem(
+    val id: Int? = null,
     val title: String,
     val author: String,
     val createdByUser: String,
@@ -24,13 +24,13 @@ data class ProblemExposed(
     val tip: String,
     val status: String,
     val score: Int,
-    val localTimeCreated: LocalDateTime,
-    val localTimeLastModified: LocalDateTime,
+    val localTimeCreated: LocalDateTime? = null,
+    val localTimeLastModified: LocalDateTime? = null,
 )
 
 @Suppress("unused")
-val problemExposedExample = ProblemExposed(
-    problemId = "T001",
+val problemExample = Problem(
+    id = 1,
     title = "title",
     author = "yusy",
     createdByUser = "yusy",

@@ -1,5 +1,6 @@
 package cn.kzoj.data.problem
 
+import cn.kzoj.models.problem.Problem
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -7,7 +8,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 class ProblemDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object: IntEntityClass<ProblemDAO>(Problems)
 
-    var problemId               by Problems.problemId
     var title                   by Problems.title
     var author                  by Problems.author
     var createdByUser           by Problems.createdByUser
@@ -27,9 +27,9 @@ class ProblemDAO(id: EntityID<Int>) : IntEntity(id) {
     var localTimeLastModified   by Problems.localTimeLastModified
 }
 
-fun ProblemDAO.toProblemExposed(): ProblemExposed =
-    ProblemExposed(
-        problemId = this.problemId,
+fun ProblemDAO.expose(): Problem =
+    Problem(
+        id = this.id.value,
         title = this.title,
         author = this.author,
         createdByUser = this.createdByUser,
