@@ -40,7 +40,7 @@ class ProblemServer(
                 status = newProblem.status
                 score = newProblem.score
                 localTimeCreated = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                localTimeLastModified = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                localTimeLastModified = this.localTimeCreated
             }
         }.id.value
 
@@ -50,11 +50,43 @@ class ProblemServer(
         }
 
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.find { Problems.id eq id }.let {
-                if (it.empty()) {
+            ProblemDAO.findById(id).let {
+                if (it == null) {
                     throw NotFoundException("Problem with id $id not found.")
-                } else {
-                    it.first().delete()
+                }
+
+                it.delete()
+            }
+        }
+    }
+
+    @Suppress("DuplicatedCode")
+    suspend fun updateProblem(newProblem: Problem) {
+        // TODO: 可能存在篡改id破坏数据库的行为
+        if (newProblem.id == null) {
+            throw BadRequestException("Problem id should be Int.")
+        }
+
+        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            ProblemDAO.findByIdAndUpdate(newProblem.id) {
+                it.title = newProblem.title
+                it.author = newProblem.author
+                it.description = newProblem.description
+                it.timeLimit = newProblem.timeLimit
+                it.memoryLimit = newProblem.memoryLimit
+                it.stackLimit = newProblem.stackLimit
+                it.inputDescription = newProblem.inputDescription
+                it.outputDescription = newProblem.outputDescription
+                it.examples = newProblem.examples
+                it.problemSource = newProblem.problemSource
+                it.difficulty = newProblem.difficulty
+                it.tip = newProblem.tip
+                it.status = newProblem.status
+                it.score = newProblem.score
+                it.localTimeLastModified = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            }.let {
+                if (it == null) {
+                    throw NotFoundException("Problem with id ${newProblem.id} not found.")
                 }
             }
         }
@@ -65,14 +97,29 @@ class ProblemServer(
             throw BadRequestException("Problem id should be Int.")
         } else {
             newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-                ProblemDAO.find { Problems.id eq id }.let {
-                    if (it.empty()) {
+                ProblemDAO.findById(id).let {
+                    if (it == null) {
                         throw NotFoundException("Problem with id $id not found.")
-                    } else {
-                        it.first()
                     }
+
+                    it.expose()
                 }
-            }.expose()
+            }
+        }
+
+    suspend fun queryProblemByTitle(title: String): List<Problem> =
+        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            ProblemDAO.find { Problems.title like "%$title%" }.also {
+                if (it.empty()) {
+                    throw NotFoundException("Problem with title containing \"$title\" not found.")
+                }
+            }.toList().let {
+                val problemArrayList: ArrayList<Problem> = arrayListOf()
+                it.forEach {
+                    problemArrayList.add(it.expose())
+                }
+                problemArrayList.toList()
+            }
         }
 
     fun judgeProblem(submitRequest: SubmitRequest): SubmitReceipt =

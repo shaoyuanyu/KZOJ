@@ -15,7 +15,9 @@ fun Application.problemRoutes(problemServer: ProblemServer) {
             // CRUD
             createProblem(problemServer)
             deleteProblem(problemServer)
+            updateProblem(problemServer)
             queryProblemById(problemServer)
+            queryProblemByTitle(problemServer)
 
             // 判题
             submitProblem(problemServer)
@@ -58,6 +60,21 @@ fun Route.deleteProblem(problemServer: ProblemServer) {
 }
 
 /**
+ * 更新题目
+ *
+ * 接收题目: Problem
+ */
+fun Route.updateProblem(problemServer: ProblemServer) {
+    put("/update") {
+        val newProblem = call.receive<Problem>()
+
+        problemServer.updateProblem(newProblem)
+
+        call.response.status(HttpStatusCode.OK)
+    }
+}
+
+/**
  * 根据id查询题目
  *
  * 接收id: Int
@@ -74,6 +91,22 @@ fun Route.queryProblemById(problemServer: ProblemServer) {
     }
 }
 
+/**
+ * 根据标题查询题目
+ *
+ * 接收标题（关键字）：String
+ *
+ * 返回题目列表：List<Problem>
+ */
+fun Route.queryProblemByTitle(problemServer: ProblemServer) {
+    get("/queryByTitle/{title}") {
+        val title = this.context.parameters["title"].toString()
+
+        call.respond(
+            problemServer.queryProblemByTitle(title)
+        )
+    }
+}
 
 /**
  * 提交
