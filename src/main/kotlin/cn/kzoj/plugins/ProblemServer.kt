@@ -7,5 +7,6 @@ import org.jetbrains.exposed.sql.Database
 fun Application.configureProblemServer(database: Database): ProblemServer =
     ProblemServer(
         database = database,
-        goJudgeUrl = environment.config.property("gojudge.url").getString()
+        goJudgeUrl = environment.config.property("gojudge.url").getString(),
+        testCasePath = environment.config.property("local_data.test_case.path").getString(),
     )

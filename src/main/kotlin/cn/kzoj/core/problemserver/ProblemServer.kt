@@ -16,10 +16,11 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class ProblemServer(
+    goJudgeUrl: String,
+    testCasePath: String,
     private val database: Database,
-    goJudgeUrl: String
 ) {
-    private val judge = Judge(goJudgeUrl, database)
+    private val judge = Judge(goJudgeUrl, testCasePath)
 
     suspend fun createProblem(newProblem: Problem): Int =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {

@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import org.jetbrains.exposed.sql.Database
+import java.io.File
 import java.security.MessageDigest
 import java.util.*
 import kotlin.collections.ArrayList
@@ -16,7 +17,7 @@ import kotlin.collections.ArrayList
 @Suppress("OPT_IN_USAGE")
 class Judge(
     private val goJudgeUrl: String,
-    private val database: Database,
+    private val testCasePath: String,
 ) {
     // 待判队列
     private var judgeQueue: Queue<JudgeRequest> = LinkedList()
@@ -74,12 +75,9 @@ class Judge(
             judgeTime = Clock.System.now()
         )
 
-        // TODO: 测试数据从数据库读出
-        val testCaseMap = mapOf(
-            "1 1" to "2\n",
-            "1 2" to "3\n",
-            "11 12" to "13\n",
-        )
+        // TODO: 测试数据从local data读出
+        val testCaseMap: Map<String, String> = readTestCase("$testCasePath/${judgeRequest.submitRequest.problemId}")
+        println("\n\ntest case: $testCaseMap\n\n")
 
         return if (!sandboxRun.compile()) {
             // 编译失败
@@ -108,6 +106,26 @@ class Judge(
 
             judgeResult
         }
+    }
+
+    private fun readTestCase(path: String): Map<String, String> {
+        var index = 1
+        val testCaseMap: MutableMap<String, String> = mutableMapOf()
+
+        while (true) {
+            val inFile = File(path, "$index.in")
+            val outFile = File(path, "$index.out")
+
+            if (inFile.exists() && inFile.isFile && outFile.exists() && outFile.isFile) {
+                testCaseMap.put(inFile.readText(), outFile.readText())
+            } else {
+                break
+            }
+
+            index++
+        }
+
+        return testCaseMap.toMap()
     }
 
     fun addJudgeRequest(submitRequest: SubmitRequest): SubmitReceipt {
