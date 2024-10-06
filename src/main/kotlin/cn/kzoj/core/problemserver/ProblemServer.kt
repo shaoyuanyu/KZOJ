@@ -19,7 +19,7 @@ class ProblemServer(
     private val database: Database,
     goJudgeUrl: String
 ) {
-    private val judge = Judge(goJudgeUrl)
+    private val judge = Judge(goJudgeUrl, database)
 
     suspend fun createProblem(newProblem: Problem): Int =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {

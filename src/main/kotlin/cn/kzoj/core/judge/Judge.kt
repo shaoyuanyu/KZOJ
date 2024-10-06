@@ -8,13 +8,15 @@ import cn.kzoj.models.submit.SubmitReceipt
 import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
+import org.jetbrains.exposed.sql.Database
 import java.security.MessageDigest
 import java.util.*
 import kotlin.collections.ArrayList
 
 @Suppress("OPT_IN_USAGE")
 class Judge(
-    private val goJudgeUrl: String
+    private val goJudgeUrl: String,
+    private val database: Database,
 ) {
     // 待判队列
     private var judgeQueue: Queue<JudgeRequest> = LinkedList()
