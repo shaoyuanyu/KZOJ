@@ -46,7 +46,7 @@ class ProblemServer(
 
     suspend fun deleteProblem(id: Int?) {
         if (id == null) {
-            throw NotFoundException("Problem id should be Int.")
+            throw BadRequestException("Problem id should be Int.")
         }
 
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
@@ -62,7 +62,7 @@ class ProblemServer(
 
     suspend fun queryProblemById(id: Int?): Problem =
         if (id == null) {
-            throw NotFoundException("Problem id should be Int.")
+            throw BadRequestException("Problem id should be Int.")
         } else {
             newSuspendedTransaction(context=Dispatchers.Default, db=database) {
                 ProblemDAO.find { Problems.id eq id }.let {

@@ -3,6 +3,7 @@ package cn.kzoj.routes
 import cn.kzoj.core.problemserver.ProblemServer
 import cn.kzoj.models.problem.Problem
 import cn.kzoj.models.submit.SubmitRequest
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -35,9 +36,9 @@ fun Route.createProblem(problemServer: ProblemServer) {
     post("/create") {
         val newProblem = call.receive<Problem>()
 
-        call.respond(
-            problemServer.createProblem(newProblem)
-        )
+        problemServer.createProblem(newProblem)
+
+        call.response.status(HttpStatusCode.Created)
     }
 }
 
@@ -52,7 +53,7 @@ fun Route.deleteProblem(problemServer: ProblemServer) {
 
         problemServer.deleteProblem(id)
 
-        // TODO: 返回
+        call.response.status(HttpStatusCode.OK)
     }
 }
 

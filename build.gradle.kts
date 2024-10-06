@@ -35,23 +35,22 @@ repositories {
 }
 
 dependencies {
-    // ktor server
+    // ktor-server
+    implementation("io.ktor:ktor-server-auth-jvm")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm")
     implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-auth-jvm") // auth
-    implementation("io.ktor:ktor-server-auth-jwt-jvm") // auth jwt
-    implementation("io.ktor:ktor-server-content-negotiation-jvm") // content negotiation
-    implementation("io.ktor:ktor-server-netty-jvm") // netty
-    implementation("io.ktor:ktor-server-cors-jvm") // cors
-    implementation("io.ktor:ktor-server-resources-jvm") // resources
-    testImplementation("io.ktor:ktor-server-tests-jvm") // tests
+    implementation("io.ktor:ktor-server-cors-jvm")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm")
+    implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-resources-jvm")
+    implementation("io.ktor:ktor-server-status-pages")
+    testImplementation("io.ktor:ktor-server-tests-jvm")
 
     // ktor client
     implementation("io.ktor:ktor-client-core-jvm")
     implementation("io.ktor:ktor-client-apache-jvm")
     implementation("io.ktor:ktor-client-content-negotiation-jvm")
-
-    // ktor
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm") // serialization
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 
     // exposed
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
