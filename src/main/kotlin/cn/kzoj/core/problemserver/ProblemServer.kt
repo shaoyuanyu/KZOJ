@@ -20,7 +20,7 @@ class ProblemServer(
     testCasePath: String,
     private val database: Database,
 ) {
-    private val judge = Judge(goJudgeUrl, testCasePath)
+    private val judge = Judge(goJudgeUrl, testCasePath, database)
 
     suspend fun createProblem(newProblem: Problem): Int =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
@@ -116,9 +116,7 @@ class ProblemServer(
                 }
             }.toList().let {
                 val problemArrayList: ArrayList<Problem> = arrayListOf()
-                it.forEach {
-                    problemArrayList.add(it.expose())
-                }
+                it.forEach { problemArrayList.add(it.expose()) }
                 problemArrayList.toList()
             }
         }

@@ -1,14 +1,19 @@
 package cn.kzoj.core.judge
 
 import cn.kzoj.common.JudgeStatus
+import cn.kzoj.data.problemcase.ProblemCaseDAO
+import cn.kzoj.data.problemcase.ProblemCases
+import cn.kzoj.data.problemcase.expose
 import cn.kzoj.models.judge.JudgeRequest
 import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.models.judge.JudgeResult
+import cn.kzoj.models.problemcase.ProblemCase
 import cn.kzoj.models.submit.SubmitReceipt
 import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.File
 import java.security.MessageDigest
 import java.util.*
@@ -18,6 +23,7 @@ import kotlin.collections.ArrayList
 class Judge(
     private val goJudgeUrl: String,
     private val testCasePath: String,
+    private val database: Database
 ) {
     // 待判队列
     private var judgeQueue: Queue<JudgeRequest> = LinkedList()
@@ -75,58 +81,49 @@ class Judge(
             judgeTime = Clock.System.now()
         )
 
-        // TODO: 测试数据从local data读出
-        val testCaseMap: Map<String, String> = readTestCase("$testCasePath/${judgeRequest.submitRequest.problemId}")
-        println("\n\ntest case: $testCaseMap\n\n")
-
-        return if (!sandboxRun.compile()) {
+        if (!sandboxRun.compile()) {
             // 编译失败
             println("\n\ncompile failed\n\n")
-            judgeResult.also {
+
+            return judgeResult.also {
                 it.accept = false
             }
-        } else {
-            // 编译通过，逐个运行测试数据
-            judgeResult.evaluationPoint = arrayListOf()
-
-            testCaseMap.forEach { (testCaseIn, testCaseOut) ->
-                val testRes = sandboxRun.runTestCase(testCaseIn)
-
-                println("\nres: $testRes ans: $testCaseOut\n")
-
-                if (testRes == testCaseOut) {
-                    judgeResult.evaluationPoint!!.add(true)
-                } else {
-                    judgeResult.evaluationPoint!!.add(false)
-                    judgeResult.accept = false
-                }
-            }
-
-            sandboxRun.delCache()
-
-            judgeResult
         }
-    }
 
-    private fun readTestCase(path: String): Map<String, String> {
-        var index = 1
-        val testCaseMap: MutableMap<String, String> = mutableMapOf()
+        judgeResult.evaluationPoint = arrayListOf()
+        val problemCasePath = "$testCasePath/${judgeRequest.submitRequest.problemId}"
+        val problemCaseList: List<ProblemCase> = getProblemCaseList(judgeRequest.submitRequest.problemId)
 
-        while (true) {
-            val inFile = File(path, "$index.in")
-            val outFile = File(path, "$index.out")
+        problemCaseList.forEach {
+            val caseContentPair = readProblemCaseContent(problemCasePath, it.caseInFile, it.caseOutFile)
 
-            if (inFile.exists() && inFile.isFile && outFile.exists() && outFile.isFile) {
-                testCaseMap.put(inFile.readText(), outFile.readText())
+            // run
+            val testRes = sandboxRun.runTestCase(caseContentPair.first)
+
+            if (testRes == caseContentPair.second) {
+                judgeResult.evaluationPoint!!.add(true)
             } else {
-                break
+                judgeResult.evaluationPoint!!.add(false)
+                judgeResult.accept = false
             }
-
-            index++
         }
 
-        return testCaseMap.toMap()
+        sandboxRun.delCache()
+
+        return judgeResult
     }
+
+    private suspend fun getProblemCaseList(problemId: Int): List<ProblemCase> =
+        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            ProblemCaseDAO.find { ProblemCases.problemId eq problemId }.toList().let {
+                val problemCaseArrayList: ArrayList<ProblemCase> = arrayListOf()
+                it.forEach { problemCaseArrayList.add(it.expose()) }
+                problemCaseArrayList.toList()
+            }
+        }
+
+    private fun readProblemCaseContent(path: String, caseInFilename: String, caseOutFilename:String): Pair<String, String> =
+        File(path, caseInFilename).readText() to File(path, caseOutFilename).readText()
 
     fun addJudgeRequest(submitRequest: SubmitRequest): SubmitReceipt {
         val submitTime = Clock.System.now()

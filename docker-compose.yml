@@ -11,6 +11,7 @@ services:
         DB_USER: "root"
         DB_PASSWORD: "kzoj_db_test"
         DATA_TESTCASE_PATH: "/app/data/testcase"
+        GOJUDGE_URL: "http://host.docker.internal:5050"
     depends_on:
       db:
         condition: service_healthy

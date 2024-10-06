@@ -1,6 +1,7 @@
 package cn.kzoj.plugins
 
 import cn.kzoj.data.problem.Problems
+import cn.kzoj.data.problemcase.ProblemCases
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -49,6 +50,7 @@ fun Application.configureDatabase(): Database {
     // 检查table并创建缺失的，DSL "CREATE TABLE IF NOT EXISTS"
     transaction(database) {
         SchemaUtils.create(Problems)
+        SchemaUtils.create(ProblemCases)
     }
 
     return database
