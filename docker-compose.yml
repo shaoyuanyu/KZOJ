@@ -28,6 +28,12 @@ services:
         test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
         timeout: 20s
         retries: 10
+  sandbox:
+    build: ./sandboxDockerConfig
+    privileged: true
+    shm_size: 256m
+    ports:
+      - "5050:5050"
 volumes:
   local_data:
   kzoj_db:
