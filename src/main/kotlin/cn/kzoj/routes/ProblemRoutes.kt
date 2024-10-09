@@ -133,8 +133,8 @@ fun Route.submitProblem(problemServer: ProblemServer) {
  * 返回提交收据: SubmitReceipt
  */
 fun Route.queryJudgeStatus(problemServer: ProblemServer) {
-    get("/judgeStatus") {
-        val judgeId = call.receiveText()
+    get("/judgeStatus/{judgeId}") {
+        val judgeId = this.context.parameters["judgeId"].toString()
 
         call.respond(
             problemServer.queryJudgeStatus(judgeId)
@@ -150,8 +150,8 @@ fun Route.queryJudgeStatus(problemServer: ProblemServer) {
  * 返回判题结果: JudgeResult
  */
 fun Route.queryJudgeResult(problemServer: ProblemServer) {
-    get("/judgeResult") {
-        val judgeId = call.receiveText()
+    get("/judgeResult/{judgeId}") {
+        val judgeId = this.context.parameters["judgeId"].toString()
 
         call.respond(
             problemServer.queryJudgeResult(judgeId)
