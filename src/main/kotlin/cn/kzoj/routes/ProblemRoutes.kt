@@ -5,6 +5,7 @@ import cn.kzoj.models.problem.Problem
 import cn.kzoj.models.submit.SubmitRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -18,6 +19,7 @@ fun Application.problemRoutes(problemServer: ProblemServer) {
             updateProblem(problemServer)
             queryProblemById(problemServer)
             queryProblemByTitle(problemServer)
+            queryProblemByPage(problemServer)
 
             // 判题
             submitProblem(problemServer)
@@ -51,7 +53,7 @@ fun Route.createProblem(problemServer: ProblemServer) {
  */
 fun Route.deleteProblem(problemServer: ProblemServer) {
     delete("/{id}") {
-        val id = this.context.parameters["id"].toString().toIntOrNull()
+        val id = call.parameters["id"].toString().toIntOrNull()
 
         problemServer.deleteProblem(id)
 
@@ -83,7 +85,7 @@ fun Route.updateProblem(problemServer: ProblemServer) {
  */
 fun Route.queryProblemById(problemServer: ProblemServer) {
     get("/get/{id}") {
-        val id = this.context.parameters["id"].toString().toIntOrNull()
+        val id = call.parameters["id"].toString().toIntOrNull()
 
         call.respond(
             problemServer.queryProblemById(id)
@@ -100,10 +102,43 @@ fun Route.queryProblemById(problemServer: ProblemServer) {
  */
 fun Route.queryProblemByTitle(problemServer: ProblemServer) {
     get("/queryByTitle/{title}") {
-        val title = this.context.parameters["title"].toString()
+        val title = call.parameters["title"].toString()
 
         call.respond(
             problemServer.queryProblemByTitle(title)
+        )
+    }
+}
+
+/**
+ * 按页查询题目
+ *
+ * QueryParameters:
+ * pageIndex: Int           （当前页数，从1开始）
+ * pageSize?: Int           （页大小，默认为20）
+ * isAscending?: Boolean    （是否升序，默认为true）
+ *
+ * 返回题目列表：List<Problem>
+ */
+fun Route.queryProblemByPage(problemServer: ProblemServer) {
+    get("/queryByPage") {
+        val pageIndex = call.request.queryParameters["pageIndex"].toString().toIntOrNull()
+        val pageSize = call.request.queryParameters["pageSize"].toString().toIntOrNull()
+        val isAscending = when (call.request.queryParameters["isAscending"].toString()) {
+            "false" -> false
+            else -> true
+        }
+
+        call.respond(
+            if (pageIndex == null) {
+                throw BadRequestException("page index should be Int.")
+            } else if (pageIndex <= 0) {
+                throw BadRequestException("page index should be positive Int.")
+            } else if (pageSize == null || pageSize <= 0) {
+                problemServer.queryProblemByPage(pageIndex = pageIndex, isAscending = isAscending)
+            } else {
+                problemServer.queryProblemByPage(pageIndex = pageIndex, pageSize = pageSize, isAscending = isAscending)
+            }
         )
     }
 }
@@ -134,7 +169,7 @@ fun Route.submitProblem(problemServer: ProblemServer) {
  */
 fun Route.queryJudgeStatus(problemServer: ProblemServer) {
     get("/judgeStatus/{judgeId}") {
-        val judgeId = this.context.parameters["judgeId"].toString()
+        val judgeId = call.parameters["judgeId"].toString()
 
         call.respond(
             problemServer.queryJudgeStatus(judgeId)
@@ -151,7 +186,7 @@ fun Route.queryJudgeStatus(problemServer: ProblemServer) {
  */
 fun Route.queryJudgeResult(problemServer: ProblemServer) {
     get("/judgeResult/{judgeId}") {
-        val judgeId = this.context.parameters["judgeId"].toString()
+        val judgeId = call.parameters["judgeId"].toString()
 
         call.respond(
             problemServer.queryJudgeResult(judgeId)

@@ -121,6 +121,39 @@ class ProblemServer(
             }
         }
 
+    // TODO: 增加orderedBy参数及对应功能
+    suspend fun queryProblemByPage(pageIndex: Int, pageSize: Int = 20, isAscending: Boolean = true): List<Problem> =
+        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            ProblemDAO.all().run {
+                if (isAscending) {
+                    sortedBy { it.id }
+                } else {
+                    sortedByDescending { it.id }
+                }
+            }.let {
+                it.subList(
+                    fromIndex = with ((pageIndex-1) * pageSize) {
+                        if (this > it.size - 1) {
+                            throw BadRequestException("page index out of range.")
+                        } else {
+                            this
+                        }
+                    },
+                    toIndex = with (pageIndex * pageSize) {
+                        if (this > it.size) {
+                            it.size
+                        } else {
+                            this
+                        }
+                    },
+                )
+            }.toList().let {
+                val problemArrayList: ArrayList<Problem> = arrayListOf()
+                it.forEach { problemArrayList.add(it.expose()) }
+                problemArrayList.toList()
+            }
+        }
+
     fun judgeProblem(submitRequest: SubmitRequest): SubmitReceipt =
         judge.addJudgeRequest(submitRequest)
 
