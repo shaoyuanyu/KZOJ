@@ -114,11 +114,7 @@ class ProblemServer(
                 if (it.empty()) {
                     throw NotFoundException("Problem with title containing \"$title\" not found.")
                 }
-            }.toList().let {
-                val problemArrayList: ArrayList<Problem> = arrayListOf()
-                it.forEach { problemArrayList.add(it.expose()) }
-                problemArrayList.toList()
-            }
+            }.toList().expose()
         }
 
     // TODO: 增加orderedBy参数及对应功能
@@ -147,11 +143,7 @@ class ProblemServer(
                         }
                     },
                 )
-            }.toList().let {
-                val problemArrayList: ArrayList<Problem> = arrayListOf()
-                it.forEach { problemArrayList.add(it.expose()) }
-                problemArrayList.toList()
-            }
+            }.toList().expose()
         }
 
     fun judgeProblem(submitRequest: SubmitRequest): SubmitReceipt =

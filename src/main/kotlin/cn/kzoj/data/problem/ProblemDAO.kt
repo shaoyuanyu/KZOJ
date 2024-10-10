@@ -48,3 +48,10 @@ fun ProblemDAO.expose(): Problem =
         localTimeCreated = localTimeCreated,
         localTimeLastModified = localTimeLastModified,
     )
+
+fun List<ProblemDAO>.expose(): List<Problem> =
+    let {
+        val problemArrayList: ArrayList<Problem> = arrayListOf()
+        it.forEach { problemArrayList.add(it.expose()) }
+        problemArrayList.toList()
+    }
