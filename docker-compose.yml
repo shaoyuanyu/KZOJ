@@ -46,7 +46,6 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-
   sandbox:
     build: ./sandboxDockerConfig
     privileged: true
