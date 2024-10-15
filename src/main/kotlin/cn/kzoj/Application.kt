@@ -12,6 +12,7 @@ fun Application.module() {
     configureSerialization()
     configureStatusPages()
     val database = configureDatabase()
-    val problemServer = configureProblemServer(database)
+    val minioClient = configureMinIO()
+    val problemServer = configureProblemServer(database, minioClient)
     configureRouting(problemServer)
 }

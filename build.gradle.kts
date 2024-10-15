@@ -3,6 +3,7 @@ val logbackVersion: String by project
 val exposedVersion: String by project
 val mysqlConnectorVersion: String by project
 val hikaricpVersion: String by project
+val minioVersion: String by project
 val datetimeVersion: String by project
 
 plugins {
@@ -59,12 +60,13 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
-
     // mysql-connector-j
     implementation("com.mysql:mysql-connector-j:$mysqlConnectorVersion")
-
     // HiKariCP
     implementation("com.zaxxer:HikariCP:$hikaricpVersion")
+
+    // minio
+    implementation("io.minio:minio:$minioVersion")
 
     // logback
     implementation("ch.qos.logback:logback-classic:$logbackVersion")

@@ -1,6 +1,7 @@
 package cn.kzoj.core.judge
 
 import cn.kzoj.common.JudgeStatus
+import cn.kzoj.common.minio.MinioBucketConfig
 import cn.kzoj.data.problemcase.ProblemCaseDAO
 import cn.kzoj.data.problemcase.ProblemCases
 import cn.kzoj.data.problemcase.expose
@@ -9,12 +10,13 @@ import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.problemcase.ProblemCase
 import cn.kzoj.models.submit.SubmitReceipt
+import io.minio.GetObjectArgs
+import io.minio.MinioClient
 import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.io.File
 import java.security.MessageDigest
 import java.util.*
 import kotlin.collections.ArrayList
@@ -22,8 +24,8 @@ import kotlin.collections.ArrayList
 @Suppress("OPT_IN_USAGE")
 class Judge(
     private val goJudgeUrl: String,
-    private val testCasePath: String,
-    private val database: Database
+    private val database: Database,
+    private val minioClient: MinioClient,
 ) {
     // 待判队列
     private var judgeQueue: Queue<JudgeRequest> = LinkedList()
@@ -91,20 +93,24 @@ class Judge(
         }
 
         judgeResult.evaluationPoint = arrayListOf()
-        val problemCasePath = "$testCasePath/${judgeRequest.submitRequest.problemId}"
+        val problemCasePath = judgeRequest.submitRequest.problemId.toString()
         val problemCaseList: List<ProblemCase> = getProblemCaseList(judgeRequest.submitRequest.problemId)
 
         problemCaseList.forEach {
-            val caseContentPair = readProblemCaseContent(problemCasePath, it.caseInFile, it.caseOutFile)
+            try {
+                val caseContentPair = readProblemCaseContent(problemCasePath, it.caseInFile, it.caseOutFile)
 
-            // run
-            val testRes = sandboxRun.runTestCase(caseContentPair.first)
+                // run
+                val testRes = sandboxRun.runTestCase(caseContentPair.first)
 
-            if (testRes == caseContentPair.second) {
-                judgeResult.evaluationPoint!!.add(true)
-            } else {
-                judgeResult.evaluationPoint!!.add(false)
-                judgeResult.accept = false
+                if (testRes == caseContentPair.second) {
+                    judgeResult.evaluationPoint!!.add(true)
+                } else {
+                    judgeResult.evaluationPoint!!.add(false)
+                    judgeResult.accept = false
+                }
+            } catch (e: Exception) {
+                // TODO: logback
             }
         }
 
@@ -123,7 +129,25 @@ class Judge(
         }
 
     private fun readProblemCaseContent(path: String, caseInFilename: String, caseOutFilename:String): Pair<String, String> =
-        File(path, caseInFilename).readText() to File(path, caseOutFilename).readText()
+        minioClient.getObject(
+            GetObjectArgs.builder()
+                .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
+                .`object`("$path/$caseInFilename")
+                .build()
+        ).run {
+            val caseIn = readAllBytes().toString(Charsets.UTF_8)
+            close()
+            caseIn
+        } to minioClient.getObject(
+            GetObjectArgs.builder()
+                .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
+                .`object`("$path/$caseOutFilename")
+                .build()
+        ).run {
+            val caseOut = readAllBytes().toString(Charsets.UTF_8)
+            close()
+            caseOut
+        }
 
     fun addJudgeRequest(submitRequest: SubmitRequest): SubmitReceipt {
         val submitTime = Clock.System.now()

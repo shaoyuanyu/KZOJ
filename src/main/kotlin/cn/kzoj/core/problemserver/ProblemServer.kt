@@ -8,6 +8,7 @@ import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.problem.Problem
 import cn.kzoj.models.submit.SubmitReceipt
 import io.ktor.server.plugins.*
+import io.minio.MinioClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -17,10 +18,14 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 class ProblemServer(
     goJudgeUrl: String,
-    testCasePath: String,
     private val database: Database,
+    private val minioClient: MinioClient,
 ) {
-    private val judge = Judge(goJudgeUrl, testCasePath, database)
+    private val judge = Judge(
+        goJudgeUrl = goJudgeUrl,
+        database = database,
+        minioClient = minioClient
+    )
 
     suspend fun createProblem(newProblem: Problem): Int =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
