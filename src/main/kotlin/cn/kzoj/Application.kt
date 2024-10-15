@@ -13,5 +13,6 @@ fun Application.module() {
     configureStatusPages()
     val database = configureDatabase()
     val problemServer = configureProblemServer(database)
+    val minioClient = configureMinIO()
     configureRouting(problemServer)
 }
