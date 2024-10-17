@@ -1,4 +1,4 @@
-package cn.kzoj.core.judge
+package cn.kzoj.core
 
 import cn.kzoj.common.sandbox.LanguageConfig
 import cn.kzoj.common.sandbox.SandboxConfig

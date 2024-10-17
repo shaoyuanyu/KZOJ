@@ -6,12 +6,12 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 class ProblemCaseDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object: IntEntityClass<ProblemCaseDAO>(ProblemCases)
+    companion object: IntEntityClass<ProblemCaseDAO>(ProblemCaseTable)
 
-    var problemId       by ProblemCases.problemId
-    var caseInFile      by ProblemCases.caseInFile
-    var caseOutFile     by ProblemCases.caseOutFile
-    var score           by ProblemCases.score
+    var problemId       by ProblemCaseTable.problemId
+    var caseInFile      by ProblemCaseTable.caseInFile
+    var caseOutFile     by ProblemCaseTable.caseOutFile
+    var score           by ProblemCaseTable.score
 }
 
 fun ProblemCaseDAO.expose(): ProblemCase =

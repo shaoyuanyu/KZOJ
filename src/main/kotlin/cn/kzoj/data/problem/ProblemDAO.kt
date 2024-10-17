@@ -6,25 +6,25 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 class ProblemDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object: IntEntityClass<ProblemDAO>(Problems)
+    companion object: IntEntityClass<ProblemDAO>(ProblemTable)
 
-    var title                   by Problems.title
-    var author                  by Problems.author
-    var createdByUser           by Problems.createdByUser
-    var description             by Problems.description
-    var timeLimit               by Problems.timeLimit
-    var memoryLimit             by Problems.memoryLimit
-    var stackLimit              by Problems.stackLimit
-    var inputDescription        by Problems.inputDescription
-    var outputDescription       by Problems.outputDescription
-    var examples                by Problems.examples
-    var problemSource           by Problems.problemSource
-    var difficulty              by Problems.difficulty
-    var tip                     by Problems.tip
-    var status                  by Problems.status
-    var score                   by Problems.score
-    var localTimeCreated        by Problems.localTimeCreated
-    var localTimeLastModified   by Problems.localTimeLastModified
+    var title                   by ProblemTable.title
+    var author                  by ProblemTable.author
+    var createdByUser           by ProblemTable.createdByUser
+    var description             by ProblemTable.description
+    var timeLimit               by ProblemTable.timeLimit
+    var memoryLimit             by ProblemTable.memoryLimit
+    var stackLimit              by ProblemTable.stackLimit
+    var inputDescription        by ProblemTable.inputDescription
+    var outputDescription       by ProblemTable.outputDescription
+    var examples                by ProblemTable.examples
+    var problemSource           by ProblemTable.problemSource
+    var difficulty              by ProblemTable.difficulty
+    var tip                     by ProblemTable.tip
+    var status                  by ProblemTable.status
+    var score                   by ProblemTable.score
+    var localTimeCreated        by ProblemTable.localTimeCreated
+    var localTimeLastModified   by ProblemTable.localTimeLastModified
 }
 
 fun ProblemDAO.expose(): Problem =

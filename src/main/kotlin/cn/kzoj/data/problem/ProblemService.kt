@@ -1,14 +1,8 @@
-package cn.kzoj.core.problemserver
+package cn.kzoj.data.problem
 
-import cn.kzoj.core.judge.Judge
-import cn.kzoj.data.problem.ProblemDAO
-import cn.kzoj.data.problem.*
-import cn.kzoj.models.submit.SubmitRequest
-import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.problem.Problem
-import cn.kzoj.models.submit.SubmitReceipt
-import io.ktor.server.plugins.*
-import io.minio.MinioClient
+import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -16,17 +10,9 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-class ProblemServer(
-    goJudgeUrl: String,
+class ProblemService(
     private val database: Database,
-    private val minioClient: MinioClient,
 ) {
-    private val judge = Judge(
-        goJudgeUrl = goJudgeUrl,
-        database = database,
-        minioClient = minioClient
-    )
-
     suspend fun createProblem(newProblem: Problem): Int =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
             ProblemDAO.new {
@@ -115,7 +101,7 @@ class ProblemServer(
 
     suspend fun queryProblemByTitle(title: String): List<Problem> =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.find { Problems.title like "%$title%" }.also {
+            ProblemDAO.find { ProblemTable.title like "%$title%" }.also {
                 if (it.empty()) {
                     throw NotFoundException("Problem with title containing \"$title\" not found.")
                 }
@@ -150,13 +136,4 @@ class ProblemServer(
                 )
             }.toList().expose()
         }
-
-    fun judgeProblem(submitRequest: SubmitRequest): SubmitReceipt =
-        judge.addJudgeRequest(submitRequest)
-
-    fun queryJudgeStatus(judgeId: String): SubmitReceipt =
-        judge.queryJudgeStatus(judgeId)
-
-    fun queryJudgeResult(judgeId: String): JudgeResult =
-        judge.queryJudgeResult(judgeId)
 }

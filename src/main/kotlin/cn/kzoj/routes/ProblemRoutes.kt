@@ -1,8 +1,7 @@
 package cn.kzoj.routes
 
-import cn.kzoj.core.problemserver.ProblemServer
+import cn.kzoj.data.problem.ProblemService
 import cn.kzoj.models.problem.Problem
-import cn.kzoj.models.submit.SubmitRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.plugins.BadRequestException
@@ -10,21 +9,16 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.problemRoutes(problemServer: ProblemServer) {
+fun Application.problemRoutes(problemService: ProblemService) {
     routing {
         route("/problem") {
             // CRUD
-            createProblem(problemServer)
-            deleteProblem(problemServer)
-            updateProblem(problemServer)
-            queryProblemById(problemServer)
-            queryProblemByTitle(problemServer)
-            queryProblemByPage(problemServer)
-
-            // 判题
-            submitProblem(problemServer)
-            queryJudgeStatus(problemServer)
-            queryJudgeResult(problemServer)
+            createProblem(problemService)
+            deleteProblem(problemService)
+            updateProblem(problemService)
+            queryProblemById(problemService)
+            queryProblemByTitle(problemService)
+            queryProblemByPage(problemService)
         }
     }
 }
@@ -36,11 +30,11 @@ fun Application.problemRoutes(problemServer: ProblemServer) {
  *
  * 返回id：Int
  */
-fun Route.createProblem(problemServer: ProblemServer) {
+fun Route.createProblem(problemService: ProblemService) {
     post("/create") {
         val newProblem = call.receive<Problem>()
 
-        problemServer.createProblem(newProblem)
+        problemService.createProblem(newProblem)
 
         call.response.status(HttpStatusCode.Created)
     }
@@ -51,11 +45,11 @@ fun Route.createProblem(problemServer: ProblemServer) {
  *
  * 接收id：Int
  */
-fun Route.deleteProblem(problemServer: ProblemServer) {
+fun Route.deleteProblem(problemService: ProblemService) {
     delete("/{id}") {
         val id = call.parameters["id"].toString().toIntOrNull()
 
-        problemServer.deleteProblem(id)
+        problemService.deleteProblem(id)
 
         call.response.status(HttpStatusCode.OK)
     }
@@ -66,11 +60,11 @@ fun Route.deleteProblem(problemServer: ProblemServer) {
  *
  * 接收题目: Problem
  */
-fun Route.updateProblem(problemServer: ProblemServer) {
+fun Route.updateProblem(problemService: ProblemService) {
     put("/update") {
         val newProblem = call.receive<Problem>()
 
-        problemServer.updateProblem(newProblem)
+        problemService.updateProblem(newProblem)
 
         call.response.status(HttpStatusCode.OK)
     }
@@ -83,12 +77,12 @@ fun Route.updateProblem(problemServer: ProblemServer) {
  *
  * 返回题目: Problem
  */
-fun Route.queryProblemById(problemServer: ProblemServer) {
+fun Route.queryProblemById(problemService: ProblemService) {
     get("/get/{id}") {
         val id = call.parameters["id"].toString().toIntOrNull()
 
         call.respond(
-            problemServer.queryProblemById(id)
+            problemService.queryProblemById(id)
         )
     }
 }
@@ -100,12 +94,12 @@ fun Route.queryProblemById(problemServer: ProblemServer) {
  *
  * 返回题目列表：List<Problem>
  */
-fun Route.queryProblemByTitle(problemServer: ProblemServer) {
+fun Route.queryProblemByTitle(problemService: ProblemService) {
     get("/queryByTitle/{title}") {
         val title = call.parameters["title"].toString()
 
         call.respond(
-            problemServer.queryProblemByTitle(title)
+            problemService.queryProblemByTitle(title)
         )
     }
 }
@@ -120,7 +114,7 @@ fun Route.queryProblemByTitle(problemServer: ProblemServer) {
  *
  * 返回题目列表：List<Problem>
  */
-fun Route.queryProblemByPage(problemServer: ProblemServer) {
+fun Route.queryProblemByPage(problemService: ProblemService) {
     get("/queryByPage") {
         val pageIndex = call.request.queryParameters["pageIndex"].toString().toIntOrNull()
         val pageSize = call.request.queryParameters["pageSize"].toString().toIntOrNull()
@@ -135,61 +129,10 @@ fun Route.queryProblemByPage(problemServer: ProblemServer) {
             } else if (pageIndex <= 0) {
                 throw BadRequestException("page index should be positive Int.")
             } else if (pageSize == null || pageSize <= 0) {
-                problemServer.queryProblemByPage(pageIndex = pageIndex, isAscending = isAscending)
+                problemService.queryProblemByPage(pageIndex = pageIndex, isAscending = isAscending)
             } else {
-                problemServer.queryProblemByPage(pageIndex = pageIndex, pageSize = pageSize, isAscending = isAscending)
+                problemService.queryProblemByPage(pageIndex = pageIndex, pageSize = pageSize, isAscending = isAscending)
             }
-        )
-    }
-}
-
-/**
- * 提交
- *
- * 接收提交请求: SubmitRequest
- *
- * 返回提交收据: SubmitReceipt
- */
-fun Route.submitProblem(problemServer: ProblemServer) {
-    post("/submit") {
-        val submitRequest = call.receive<SubmitRequest>()
-
-        call.respond(
-            problemServer.judgeProblem(submitRequest)
-        )
-    }
-}
-
-/**
- * 查询判题状态
- *
- * 接收judgeId: String
- *
- * 返回提交收据: SubmitReceipt
- */
-fun Route.queryJudgeStatus(problemServer: ProblemServer) {
-    get("/judgeStatus/{judgeId}") {
-        val judgeId = call.parameters["judgeId"].toString()
-
-        call.respond(
-            problemServer.queryJudgeStatus(judgeId)
-        )
-    }
-}
-
-/**
- * 查询判题结果
- *
- * 接收JudgeId: String
- *
- * 返回判题结果: JudgeResult
- */
-fun Route.queryJudgeResult(problemServer: ProblemServer) {
-    get("/judgeResult/{judgeId}") {
-        val judgeId = call.parameters["judgeId"].toString()
-
-        call.respond(
-            problemServer.queryJudgeResult(judgeId)
         )
     }
 }

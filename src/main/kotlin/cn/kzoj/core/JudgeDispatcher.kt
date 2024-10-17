@@ -1,10 +1,8 @@
-package cn.kzoj.core.judge
+package cn.kzoj.core
 
 import cn.kzoj.common.JudgeStatus
 import cn.kzoj.common.minio.MinioBucketConfig
-import cn.kzoj.data.problemcase.ProblemCaseDAO
-import cn.kzoj.data.problemcase.ProblemCases
-import cn.kzoj.data.problemcase.expose
+import cn.kzoj.data.problemcase.ProblemCaseService
 import cn.kzoj.models.judge.JudgeRequest
 import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.models.judge.JudgeResult
@@ -15,16 +13,14 @@ import io.minio.MinioClient
 import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.security.MessageDigest
 import java.util.*
 import kotlin.collections.ArrayList
 
 @Suppress("OPT_IN_USAGE")
-class Judge(
+class JudgeDispatcher(
     private val goJudgeUrl: String,
-    private val database: Database,
+    private val problemCaseService: ProblemCaseService,
     private val minioClient: MinioClient,
 ) {
     // 待判队列
@@ -120,13 +116,7 @@ class Judge(
     }
 
     private suspend fun getProblemCaseList(problemId: Int): List<ProblemCase> =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemCaseDAO.find { ProblemCases.problemId eq problemId }.toList().let {
-                val problemCaseArrayList: ArrayList<ProblemCase> = arrayListOf()
-                it.forEach { problemCaseArrayList.add(it.expose()) }
-                problemCaseArrayList.toList()
-            }
-        }
+        problemCaseService.getProblemCaseList(problemId)
 
     private fun readProblemCaseContent(path: String, caseInFilename: String, caseOutFilename:String): Pair<String, String> =
         minioClient.getObject(
