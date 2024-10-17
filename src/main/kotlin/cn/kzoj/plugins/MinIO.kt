@@ -2,6 +2,7 @@ package cn.kzoj.plugins
 
 import cn.kzoj.common.minio.MinioBucketConfig
 import io.ktor.server.application.Application
+import io.ktor.server.application.log
 import io.minio.BucketExistsArgs
 import io.minio.MakeBucketArgs
 import io.minio.MinioClient
@@ -31,14 +32,13 @@ fun Application.configureMinIO(): MinioClient {
 
     // 检查bucket
     if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES).build())) {
+        log.info("MinIO problem_cases bucket doesn't exist and will be created.")
+
         minioClient.makeBucket(
             MakeBucketArgs.builder()
                 .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
                 .build()
         )
-
-        // TODO:logback
-        println("problem_cases bucket is now created.")
     }
 
     return minioClient

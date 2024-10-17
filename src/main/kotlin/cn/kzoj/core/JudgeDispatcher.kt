@@ -8,6 +8,7 @@ import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.problemcase.ProblemCase
 import cn.kzoj.models.submit.SubmitReceipt
+import io.ktor.util.logging.KtorSimpleLogger
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import kotlinx.coroutines.*
@@ -16,6 +17,8 @@ import kotlinx.datetime.TimeZone
 import java.security.MessageDigest
 import java.util.*
 import kotlin.collections.ArrayList
+
+internal val LOGGER = KtorSimpleLogger("cn.kzoj.JudgeDispatcher")
 
 @Suppress("OPT_IN_USAGE")
 class JudgeDispatcher(
@@ -81,7 +84,7 @@ class JudgeDispatcher(
 
         if (!sandboxRun.compile()) {
             // 编译失败
-            println("\n\ncompile failed\n\n")
+            LOGGER.info("judgeId:${judgeRequest.judgeId} failed in compiling.")
 
             return judgeResult.also {
                 it.accept = false
@@ -106,7 +109,8 @@ class JudgeDispatcher(
                     judgeResult.accept = false
                 }
             } catch (e: Exception) {
-                // TODO: logback
+                LOGGER.info("problem case: ${problemCasePath}/${it.caseInFile} or ${problemCasePath}/${it.caseOutFile} not found.")
+                LOGGER.info(e.toString())
             }
         }
 
