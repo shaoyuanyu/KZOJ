@@ -5,8 +5,6 @@ import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
@@ -31,8 +29,8 @@ class ProblemService(
                 tip = newProblem.tip
                 status = newProblem.status
                 score = newProblem.score
-                localTimeCreated = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                localTimeLastModified = this.localTimeCreated
+                utcCreated = Clock.System.now()
+                utcLastModified = this.utcCreated
             }
         }.id.value
 
@@ -75,7 +73,7 @@ class ProblemService(
                 it.tip = newProblem.tip
                 it.status = newProblem.status
                 it.score = newProblem.score
-                it.localTimeLastModified = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                it.utcLastModified = Clock.System.now()
             }.let {
                 if (it == null) {
                     throw NotFoundException("Problem with id ${newProblem.id} not found.")

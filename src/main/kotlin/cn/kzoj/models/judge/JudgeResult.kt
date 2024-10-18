@@ -10,5 +10,5 @@ data class JudgeResult(
     val status: JudgeStatus,
     var accept: Boolean? = null,
     var evaluationPoint: ArrayList<Boolean>? = null,
-    val judgeTime: Instant? = null,
+    val judgeTime: Instant, // UTC
 )

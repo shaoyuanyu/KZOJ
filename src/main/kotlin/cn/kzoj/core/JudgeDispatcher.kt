@@ -7,12 +7,18 @@ import cn.kzoj.models.submit.SubmitRequest
 import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.problemcase.ProblemCase
 import cn.kzoj.models.submit.SubmitReceipt
+import io.ktor.server.plugins.NotFoundException
 import io.ktor.util.logging.KtorSimpleLogger
-import kotlinx.coroutines.*
-import kotlinx.datetime.*
-import kotlinx.datetime.TimeZone
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.until
 import java.security.MessageDigest
-import java.util.*
+import java.util.Base64
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.collections.ArrayList
 
 internal val LOGGER = KtorSimpleLogger("cn.kzoj.JudgeDispatcher")
@@ -46,10 +52,8 @@ class JudgeDispatcher(
                     delay(SLEEP_TIME_SECONDS)
                 } else {
                     // 判题完成后超过设定时长，仍未查询结果的进行销毁
-                    val currentTime = Clock.System.now()
-                    val currentTimeZone = TimeZone.currentSystemDefault()
                     judgeResultList.forEach {
-                        if (currentTime.periodUntil(it.judgeTime!!, currentTimeZone).minutes >= TIMEOUT_DURATION_MINUTES) {
+                        if (it.judgeTime.until(Clock.System.now(), DateTimeUnit.MINUTE) >= TIMEOUT_DURATION_MINUTES) {
                             uselessJudgeResultIdList.add(it.judgeId)
                         }
                     }
@@ -138,7 +142,7 @@ class JudgeDispatcher(
         with (judgeQueue.find { it.judgeId == judgeId }) {
             if (this == null) {
                 if (judgeResultList.find { it.judgeId == judgeId } == null) {
-                    SubmitReceipt(judgeId = judgeId, status = JudgeStatus.NotFound, positionInQueue = 0)
+                    throw NotFoundException("judgeId:${judgeId} not found.")
                 } else {
                     SubmitReceipt(judgeId = judgeId, status = JudgeStatus.Finished, positionInQueue = 0)
                 }
@@ -151,7 +155,7 @@ class JudgeDispatcher(
         val result = judgeResultList.find { it.judgeId == judgeId }
 
         if (result == null) {
-            return JudgeResult(judgeId = judgeId, status = JudgeStatus.NotFound)
+            throw NotFoundException("judgeId:${judgeId} not found.")
         } else {
             uselessJudgeResultIdList.add(judgeId)
             return result

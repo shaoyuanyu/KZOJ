@@ -1,9 +1,9 @@
 package cn.kzoj.data.problem
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.kotlin.datetime.datetime
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object ProblemTable: IntIdTable("exposed_problem") {
 
@@ -46,7 +46,13 @@ object ProblemTable: IntIdTable("exposed_problem") {
 
     val score: Column<Int> = integer("score")
 
-    val localTimeCreated: Column<LocalDateTime> = datetime("gmt_created")
+    /**
+     * 创建时间，UTC
+     */
+    val utcCreated: Column<Instant> = timestamp("utc_created")
 
-    val localTimeLastModified: Column<LocalDateTime> = datetime("gmt_last_modified")
+    /**
+     * 最后修改时间，UTC
+     */
+    val utcLastModified: Column<Instant> = timestamp("utc_last_modified")
 }

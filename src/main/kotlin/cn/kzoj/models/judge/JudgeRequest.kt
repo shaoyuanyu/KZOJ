@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class JudgeRequest(
     val submitRequest: SubmitRequest,
-    val submitTime: Instant,
+    val submitTime: Instant, // UTC
     val judgeId: String,
 )

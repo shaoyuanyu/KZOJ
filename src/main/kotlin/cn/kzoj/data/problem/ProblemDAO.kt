@@ -23,8 +23,8 @@ class ProblemDAO(id: EntityID<Int>) : IntEntity(id) {
     var tip                     by ProblemTable.tip
     var status                  by ProblemTable.status
     var score                   by ProblemTable.score
-    var localTimeCreated        by ProblemTable.localTimeCreated
-    var localTimeLastModified   by ProblemTable.localTimeLastModified
+    var utcCreated              by ProblemTable.utcCreated
+    var utcLastModified         by ProblemTable.utcLastModified
 }
 
 fun ProblemDAO.expose(): Problem =
@@ -45,8 +45,8 @@ fun ProblemDAO.expose(): Problem =
         tip = this.tip,
         status = this.status,
         score = this.score,
-        localTimeCreated = localTimeCreated,
-        localTimeLastModified = localTimeLastModified,
+        utcCreated = this.utcCreated,
+        utcLastModified = this.utcLastModified,
     )
 
 fun List<ProblemDAO>.expose(): List<Problem> =

@@ -1,9 +1,7 @@
 package cn.kzoj.models.problem
 
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,8 +22,8 @@ data class Problem(
     val tip: String,
     val status: String,
     val score: Int,
-    val localTimeCreated: LocalDateTime? = null,
-    val localTimeLastModified: LocalDateTime? = null,
+    val utcCreated: Instant? = null,
+    val utcLastModified: Instant? = null,
 )
 
 @Suppress("unused")
@@ -46,6 +44,6 @@ val problemExample = Problem(
     tip = "tip",
     status = "public",
     score = 100,
-    localTimeCreated = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-    localTimeLastModified = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+    utcCreated = Clock.System.now(),
+    utcLastModified = Clock.System.now(),
 )
