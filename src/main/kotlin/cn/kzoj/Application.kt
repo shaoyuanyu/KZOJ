@@ -19,13 +19,12 @@ fun Application.module() {
 
     // 数据服务
     val problemService = ProblemService(database)
-    val problemCaseService = ProblemCaseService(database)
+    val problemCaseService = ProblemCaseService(database, minioClient)
 
     // 判题调度器
     val judgeDispatcher = JudgeDispatcher(
         goJudgeUrl = environment.config.property("gojudge.url").getString(),
-        problemCaseService = problemCaseService,
-        minioClient = minioClient
+        problemCaseService = problemCaseService
     )
 
     // 路由

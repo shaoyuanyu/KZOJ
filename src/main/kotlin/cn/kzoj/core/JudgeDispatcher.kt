@@ -1,7 +1,6 @@
 package cn.kzoj.core
 
 import cn.kzoj.common.JudgeStatus
-import cn.kzoj.common.minio.MinioBucketConfig
 import cn.kzoj.data.problemcase.ProblemCaseService
 import cn.kzoj.models.judge.JudgeRequest
 import cn.kzoj.models.submit.SubmitRequest
@@ -9,8 +8,6 @@ import cn.kzoj.models.judge.JudgeResult
 import cn.kzoj.models.problemcase.ProblemCase
 import cn.kzoj.models.submit.SubmitReceipt
 import io.ktor.util.logging.KtorSimpleLogger
-import io.minio.GetObjectArgs
-import io.minio.MinioClient
 import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
@@ -24,7 +21,6 @@ internal val LOGGER = KtorSimpleLogger("cn.kzoj.JudgeDispatcher")
 class JudgeDispatcher(
     private val goJudgeUrl: String,
     private val problemCaseService: ProblemCaseService,
-    private val minioClient: MinioClient,
 ) {
     // 待判队列
     private var judgeQueue: Queue<JudgeRequest> = LinkedList()
@@ -45,7 +41,7 @@ class JudgeDispatcher(
     private suspend fun worker() {
         while (true) {
             if (judgeQueue.isEmpty()) {
-                if (judgeResultList.isEmpty()) {
+                if (judgeResultList.isEmpty) {
                     // 待判队列和判题结果列表均为空时，短暂挂起
                     delay(SLEEP_TIME_SECONDS)
                 } else {
@@ -93,11 +89,11 @@ class JudgeDispatcher(
 
         judgeResult.evaluationPoint = arrayListOf()
         val problemCasePath = judgeRequest.submitRequest.problemId.toString()
-        val problemCaseList: List<ProblemCase> = getProblemCaseList(judgeRequest.submitRequest.problemId)
+        val problemCaseList: List<ProblemCase> = problemCaseService.getProblemCaseList(judgeRequest.submitRequest.problemId)
 
         problemCaseList.forEach {
             try {
-                val caseContentPair = readProblemCaseContent(problemCasePath, it.caseInFile, it.caseOutFile)
+                val caseContentPair = problemCaseService.getProblemCaseContent(problemCasePath, it.caseInFile, it.caseOutFile)
 
                 // run
                 val testRes = sandboxRun.runTestCase(caseContentPair.first)
@@ -118,30 +114,6 @@ class JudgeDispatcher(
 
         return judgeResult
     }
-
-    private suspend fun getProblemCaseList(problemId: Int): List<ProblemCase> =
-        problemCaseService.getProblemCaseList(problemId)
-
-    private fun readProblemCaseContent(path: String, caseInFilename: String, caseOutFilename:String): Pair<String, String> =
-        minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
-                .`object`("$path/$caseInFilename")
-                .build()
-        ).run {
-            val caseIn = readAllBytes().toString(Charsets.UTF_8)
-            close()
-            caseIn
-        } to minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
-                .`object`("$path/$caseOutFilename")
-                .build()
-        ).run {
-            val caseOut = readAllBytes().toString(Charsets.UTF_8)
-            close()
-            caseOut
-        }
 
     fun addJudgeRequest(submitRequest: SubmitRequest): SubmitReceipt {
         val submitTime = Clock.System.now()
