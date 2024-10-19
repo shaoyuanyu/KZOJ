@@ -3,6 +3,7 @@ package cn.kzoj
 import cn.kzoj.core.JudgeDispatcher
 import cn.kzoj.data.problem.ProblemService
 import cn.kzoj.data.problemcase.ProblemCaseService
+import cn.kzoj.data.user.UserService
 import cn.kzoj.plugins.*
 import io.ktor.server.application.*
 
@@ -18,6 +19,7 @@ fun Application.module() {
     val minioClient = configureMinIO()
 
     // 数据服务
+    val userService = UserService(database, minioClient)
     val problemService = ProblemService(database)
     val problemCaseService = ProblemCaseService(database, minioClient)
 
@@ -28,5 +30,5 @@ fun Application.module() {
     )
 
     // 路由
-    configureRouting(problemService, judgeDispatcher)
+    configureRouting(userService, problemService, judgeDispatcher)
 }

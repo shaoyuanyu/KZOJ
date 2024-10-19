@@ -2,6 +2,7 @@ package cn.kzoj.plugins
 
 import cn.kzoj.data.problem.ProblemTable
 import cn.kzoj.data.problemcase.ProblemCaseTable
+import cn.kzoj.data.user.UserTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -51,6 +52,7 @@ fun Application.configureDatabase(): Database {
     transaction(database) {
         SchemaUtils.create(ProblemTable)
         SchemaUtils.create(ProblemCaseTable)
+        SchemaUtils.create(UserTable)
     }
 
     return database

@@ -31,14 +31,16 @@ fun Application.configureMinIO(): MinioClient {
         .build()
 
     // 检查bucket
-    if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES).build())) {
-        log.info("MinIO problem_cases bucket doesn't exist and will be created.")
+    MinioBucketConfig.BucketNameList.forEach { bucketName ->
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+            log.info("MinIO $bucketName bucket doesn't exist and will be created.")
 
-        minioClient.makeBucket(
-            MakeBucketArgs.builder()
-                .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
-                .build()
-        )
+            minioClient.makeBucket(
+                MakeBucketArgs.builder()
+                    .bucket(bucketName)
+                    .build()
+            )
+        }
     }
 
     return minioClient
