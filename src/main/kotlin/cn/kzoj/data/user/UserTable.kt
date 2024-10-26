@@ -7,7 +7,11 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object UserTable: UUIDTable("exposed_user") {
 
-    val username: Column<String> = varchar("username", 100).index()
+    /**
+     * username 唯一
+     */
+    val username: Column<String> = varchar("username", 100).uniqueIndex()
+    // val username: Column<String> = varchar("username", 100).index()
 
     val encryptedPassword: Column<String> = text("encrypted_password")
 

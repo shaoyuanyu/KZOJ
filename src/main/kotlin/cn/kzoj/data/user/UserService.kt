@@ -1,6 +1,7 @@
 package cn.kzoj.data.user
 
 import cn.kzoj.common.minio.MinioBucketConfig
+import cn.kzoj.exception.user.UsernameDuplicatedException
 import cn.kzoj.models.user.User
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
@@ -17,6 +18,14 @@ class UserService(
     @Suppress("DuplicatedCode")
     suspend fun createUser(newUser: User): String =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            UserDAO.find {
+                UserTable.username eq newUser.username
+            }.count().let {
+                if (it > 0) {
+                    throw UsernameDuplicatedException()
+                }
+            }
+
             UserDAO.new {
                 username = newUser.username
                 encryptedPassword = newUser.plainPassword!! // TODO:加密
@@ -34,7 +43,7 @@ class UserService(
 
     // TODO:图像上传到minio，生成hash index
     // TODO:根据uuid更新UserTable中的AvatarHashIndex
-    suspend fun uploadAvatar(avatarFileInputStream: InputStream) {
+    suspend fun uploadAvatar(uuid: String, avatarFileInputStream: InputStream) {
         minioClient.putObject(
             PutObjectArgs.builder()
                 .bucket(MinioBucketConfig.BucketNames.AVATARS)
@@ -45,7 +54,8 @@ class UserService(
         )
 
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            // UserDAO.findByIdAndUpdate()
+//            UserDAO.findByIdAndUpdate(UUID.fromString(uuid)) {
+//            }
         }
     }
 
