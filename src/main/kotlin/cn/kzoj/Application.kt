@@ -15,6 +15,7 @@ fun Application.module() {
     configureCORS()
     configureSerialization()
     configureStatusPages()
+
     val database = configureDatabase()
     val minioClient = configureMinIO()
 

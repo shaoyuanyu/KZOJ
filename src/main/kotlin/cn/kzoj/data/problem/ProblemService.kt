@@ -1,8 +1,10 @@
 package cn.kzoj.data.problem
 
+import cn.kzoj.exception.problem.ProblemIdNotFoundException
+import cn.kzoj.exception.problem.ProblemIdNotIntException
+import cn.kzoj.exception.problem.ProblemPageIndexOutOfRangeException
+import cn.kzoj.exception.problem.ProblemTitleNotFoundException
 import cn.kzoj.models.problem.Problem
-import io.ktor.server.plugins.BadRequestException
-import io.ktor.server.plugins.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Database
@@ -34,27 +36,22 @@ class ProblemService(
             }
         }.id.value
 
-    suspend fun deleteProblem(id: Int?) {
-        if (id == null) {
-            throw BadRequestException("Problem id should be Int.")
-        }
-
+    suspend fun deleteProblem(id: Int) =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
             ProblemDAO.findById(id).let {
                 if (it == null) {
-                    throw NotFoundException("Problem with id $id not found.")
+                    throw ProblemIdNotFoundException()
                 }
 
                 it.delete()
             }
         }
-    }
 
     @Suppress("DuplicatedCode")
     suspend fun updateProblem(newProblem: Problem) {
         // TODO: 可能存在篡改id破坏数据库的行为
         if (newProblem.id == null) {
-            throw BadRequestException("Problem id should be Int.")
+            throw ProblemIdNotIntException()
         }
 
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
@@ -76,24 +73,20 @@ class ProblemService(
                 it.utcLastModified = Clock.System.now()
             }.let {
                 if (it == null) {
-                    throw NotFoundException("Problem with id ${newProblem.id} not found.")
+                    throw ProblemIdNotFoundException()
                 }
             }
         }
     }
 
-    suspend fun queryProblemById(id: Int?): Problem =
-        if (id == null) {
-            throw BadRequestException("Problem id should be Int.")
-        } else {
-            newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-                ProblemDAO.findById(id).let {
-                    if (it == null) {
-                        throw NotFoundException("Problem with id $id not found.")
-                    }
-
-                    it.expose()
+    suspend fun queryProblemById(id: Int): Problem =
+        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            ProblemDAO.findById(id).let {
+                if (it == null) {
+                    throw ProblemIdNotFoundException()
                 }
+
+                it.expose()
             }
         }
 
@@ -101,7 +94,7 @@ class ProblemService(
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
             ProblemDAO.find { ProblemTable.title like "%$title%" }.also {
                 if (it.empty()) {
-                    throw NotFoundException("Problem with title containing \"$title\" not found.")
+                    throw ProblemTitleNotFoundException()
                 }
             }.toList().expose()
         }
@@ -119,7 +112,7 @@ class ProblemService(
                 it.subList(
                     fromIndex = with ((pageIndex-1) * pageSize) {
                         if (this > it.size - 1) {
-                            throw BadRequestException("page index out of range.")
+                            throw ProblemPageIndexOutOfRangeException()
                         } else {
                             this
                         }

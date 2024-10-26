@@ -1,10 +1,11 @@
 package cn.kzoj.routes
 
 import cn.kzoj.data.problem.ProblemService
+import cn.kzoj.exception.problem.ProblemIdNotIntException
+import cn.kzoj.exception.problem.ProblemPageIndexNotPositiveIntException
 import cn.kzoj.models.problem.Problem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
-import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -49,6 +50,10 @@ fun Route.deleteProblem(problemService: ProblemService) {
     delete("/{id}") {
         val id = call.parameters["id"].toString().toIntOrNull()
 
+        if (id == null) {
+            throw ProblemIdNotIntException()
+        }
+
         problemService.deleteProblem(id)
 
         call.response.status(HttpStatusCode.OK)
@@ -80,6 +85,10 @@ fun Route.updateProblem(problemService: ProblemService) {
 fun Route.queryProblemById(problemService: ProblemService) {
     get("/get/{id}") {
         val id = call.parameters["id"].toString().toIntOrNull()
+
+        if (id == null) {
+            throw ProblemIdNotIntException()
+        }
 
         call.respond(
             problemService.queryProblemById(id)
@@ -124,10 +133,8 @@ fun Route.queryProblemByPage(problemService: ProblemService) {
         }
 
         call.respond(
-            if (pageIndex == null) {
-                throw BadRequestException("page index should be Int.")
-            } else if (pageIndex <= 0) {
-                throw BadRequestException("page index should be positive Int.")
+            if (pageIndex == null || pageIndex <= 0) {
+                throw ProblemPageIndexNotPositiveIntException()
             } else if (pageSize == null || pageSize <= 0) {
                 problemService.queryProblemByPage(pageIndex = pageIndex, isAscending = isAscending)
             } else {
