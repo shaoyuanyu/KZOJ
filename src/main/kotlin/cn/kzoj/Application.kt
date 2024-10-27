@@ -12,10 +12,6 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureCORS()
-    configureSerialization()
-    configureStatusPages()
-
     val database = configureDatabase()
     val minioClient = configureMinIO()
 
@@ -29,6 +25,11 @@ fun Application.module() {
         goJudgeUrl = environment.config.property("gojudge.url").getString(),
         problemCaseService = problemCaseService
     )
+
+    configureSecurity(userService)
+    configureCORS()
+    configureSerialization()
+    configureStatusPages()
 
     // 路由
     configureRouting(userService, problemService, judgeDispatcher)

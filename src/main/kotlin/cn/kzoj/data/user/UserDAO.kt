@@ -18,8 +18,9 @@ class UserDAO(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var githubHomepage          by UserTable.githubHomepage
     var email                   by UserTable.email
     var avatarHashIndex         by UserTable.avatarHashIndex
+    var authority               by UserTable.authority
     var utcCreated              by UserTable.utcCreated
-    var utcUpdated         by UserTable.utcUpdated
+    var utcUpdated              by UserTable.utcUpdated
 }
 
 fun UserDAO.expose(): User =
@@ -33,6 +34,7 @@ fun UserDAO.expose(): User =
         gender = this.gender,
         githubHomepage = this.githubHomepage,
         email = this.email,
+        authority = this.authority,
         utcCreated = this.utcCreated,
         utcUpdated = this.utcUpdated
     )
@@ -48,6 +50,7 @@ fun UserDAO.exposeWithoutPasswd(): User =
         gender = this.gender,
         githubHomepage = this.githubHomepage,
         email = this.email,
+        authority = this.authority,
         utcCreated = this.utcCreated,
         utcUpdated = this.utcUpdated
     )

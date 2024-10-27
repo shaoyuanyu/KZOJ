@@ -1,68 +1,78 @@
 package cn.kzoj.plugins
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
+import cn.kzoj.data.user.UserService
+import cn.kzoj.exception.user.UserAccountValidateException
+import cn.kzoj.exception.user.UserAuthorityException
+import cn.kzoj.models.user.UserAuthority
+import cn.kzoj.models.user.UserSession
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.form
+import io.ktor.server.auth.session
+import io.ktor.server.response.respondRedirect
+import io.ktor.server.sessions.Sessions
+import io.ktor.server.sessions.cookie
+import io.ktor.server.sessions.directorySessionStorage
+import java.io.File
 
-fun Application.configureSecurity() {
-    authentication {
-        oauth("auth-oauth-google") {
-            urlProvider = { "http://localhost:8080/callback" }
-            providerLookup = {
-                OAuthServerSettings.OAuth2ServerSettings(
-                    name = "google",
-                    authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
-                    accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
-                    requestMethod = HttpMethod.Post,
-                    clientId = System.getenv("GOOGLE_CLIENT_ID"),
-                    clientSecret = System.getenv("GOOGLE_CLIENT_SECRET"),
-                    defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.profile")
-                )
-            }
-            client = HttpClient(Apache)
+fun Application.configureSecurity(userService: UserService) {
+    // Sessions 模块
+    val sessionStoragePath = environment.config.property("session.storage.path").getString()
+    install(Sessions) {
+        cookie<UserSession>("user_session", directorySessionStorage(File(sessionStoragePath))) {
+            cookie.path = "/"
+            cookie.maxAgeInSeconds = 600 // TODO: 约定有效期
         }
     }
-    // Please read the jwt property from the config file if you are using EngineMain
-    val jwtAudience = "jwt-audience"
-    val jwtDomain = "https://jwt-provider-domain/"
-    val jwtRealm = "ktor sample app"
-    val jwtSecret = "secret"
-    authentication {
-        jwt {
-            realm = jwtRealm
-            verifier(
-                JWT
-                    .require(Algorithm.HMAC256(jwtSecret))
-                    .withAudience(jwtAudience)
-                    .withIssuer(jwtDomain)
-                    .build()
-            )
-            validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
-            }
-        }
-    }
-    routing {
-        authenticate("auth-oauth-google") {
-            get("login") {
-                call.respondRedirect("/callback")
+
+    // Authentication 模块
+    install(Authentication) {
+        // web-form 验证（登录用）
+        form("auth-form") {
+            // 声明 web-form 中用户名和密码字段名
+            userParamName = "username"
+            passwordParamName = "password"
+
+            // 验证账户
+            validate { credentials ->
+                val uuid: String? = userService.validate(credentials.name, credentials.password)
+
+                if (uuid != null) {
+                    UserIdPrincipal(uuid)
+                } else {
+                    null
+                }
             }
 
-            get("/callback") {
-                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                call.sessions.set(UserSession(principal?.accessToken.toString()))
-                call.respondRedirect("/hello")
+            // 验证失败反馈
+            challenge {
+                throw UserAccountValidateException()
+            }
+        }
+
+        // session 验证（user级）
+        session<UserSession>("auth-session-user") {
+            validate { session ->
+                session
+            }
+
+            // session 失效，重定向到登录页面
+            challenge {
+                call.respondRedirect("/user/login")
+            }
+        }
+
+        // session 验证（admin级）
+        session<UserSession>("auth-session-admin") {
+            validate { session ->
+                if (session.userAuthority == UserAuthority.ADMIN) {
+                    session
+                } else {
+                    throw UserAuthorityException()
+                }
             }
         }
     }
 }
-
-class UserSession(accessToken: String)

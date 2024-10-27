@@ -1,5 +1,6 @@
 package cn.kzoj.data.user
 
+import cn.kzoj.models.user.UserAuthority
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
@@ -35,6 +36,13 @@ object UserTable: UUIDTable("exposed_user") {
 //        fromDb = { value -> Status.valueOf(value as String) },
 //        toDb = { it.name }
 //    )
+
+    val authority = customEnumeration(
+        name = "authority",
+        sql = "ENUM('ADMIN', 'USER')",
+        fromDb = { value -> UserAuthority.valueOf(value as String) },
+        toDb = { it.name }
+    )
 
     val utcCreated: Column<Instant> = timestamp("utc_created")
 

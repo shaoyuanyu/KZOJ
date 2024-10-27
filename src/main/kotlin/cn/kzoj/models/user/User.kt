@@ -16,6 +16,7 @@ data class User(
     val githubHomepage: String,
     val email: String,
     val avatarHashIndex: String? = null,
+    val authority: UserAuthority = UserAuthority.USER,
     val utcCreated: Instant? = null,
     val utcUpdated: Instant? = null,
 )
