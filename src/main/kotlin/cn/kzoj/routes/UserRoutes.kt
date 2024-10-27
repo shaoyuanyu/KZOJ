@@ -3,6 +3,7 @@ package cn.kzoj.routes
 import cn.kzoj.data.user.UserService
 import cn.kzoj.exception.user.UserAuthorityException
 import cn.kzoj.models.user.User
+import cn.kzoj.models.user.UserAuthority
 import cn.kzoj.models.user.UserSession
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
@@ -28,7 +29,8 @@ fun Application.userRoutes(userService: UserService) {
                 createUser(userService)
             }
 
-            // 普通用户注册/注销/更新账户/登录/登出
+            // 普通用户注册/更新账户/登录/登出
+            signup(userService)
             authenticate("auth-form") {
                 login(userService)
             }
@@ -52,12 +54,39 @@ fun Route.createUser(userService: UserService) {
     post("/create") {
         val newUser = call.receive<User>()
 
-        val uuid: String = userService.createUser(newUser)
-
-        call.application.environment.log.info("new user created, uuid: $uuid")
+        userService.createUser(newUser)
 
         call.response.status(HttpStatusCode.Created)
     }
+}
+
+/**
+ * 用户注册
+ *
+ * 注册并登录
+ */
+fun Route.signup(userService: UserService) {
+    post("/signup") {
+        val newUser = call.receive<User>().copy(
+            authority = UserAuthority.USER
+        )
+
+        val uuid = userService.createUser(newUser)
+
+        call.sessions.set(
+            UserSession(userId = uuid, username = newUser.username, userAuthority = UserAuthority.USER)
+        )
+
+        call.respondRedirect("/home") // TODO: 重定向到主页
+        call.response.status(HttpStatusCode.Created)
+    }
+}
+
+/**
+ * 用户信息更新
+ */
+fun Route.userSelfUpdate(userService: UserService) {
+
 }
 
 /**
@@ -77,6 +106,9 @@ fun Route.login(userService: UserService) {
     }
 }
 
+/**
+ * 用户登出
+ */
 fun Route.logout() {
     post("/logout") {
         call.sessions.clear<UserSession>()

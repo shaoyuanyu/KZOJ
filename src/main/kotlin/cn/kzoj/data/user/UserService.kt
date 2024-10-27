@@ -5,47 +5,54 @@ import cn.kzoj.exception.user.UsernameDuplicatedException
 import cn.kzoj.exception.user.UsernameNotFoundException
 import cn.kzoj.models.user.User
 import io.ktor.server.plugins.NotFoundException
+import io.ktor.util.logging.KtorSimpleLogger
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.InputStream
 import java.util.UUID
 
+internal val LOGGER = KtorSimpleLogger("cn.kzoj.data.UserService")
+
 class UserService(
     private val database: Database,
     private val minioClient: MinioClient
 ) {
-    @Suppress("DuplicatedCode")
-    suspend fun createUser(newUser: User): String =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            UserDAO.find {
-                UserTable.username eq newUser.username
-            }.let {
-                if (!it.empty()) {
-                    throw UsernameDuplicatedException()
-                }
+    /**
+     * 创建用户
+     */
+    suspend fun createUser(newUser: User) =
+        try {
+            newSuspendedTransaction(context = Dispatchers.Default, db = database) {
+                UserDAO.new {
+                    username = newUser.username
+                    encryptedPassword = newUser.plainPassword!! // TODO:加密
+                    school = newUser.school
+                    grade = newUser.grade
+                    realName = newUser.realName
+                    gender = newUser.gender
+                    githubHomepage = newUser.githubHomepage
+                    email = newUser.email
+                    avatarHashIndex = "" // TODO:设置默认头像
+                    authority = newUser.authority
+                    utcCreated = Clock.System.now()
+                    utcUpdated = this.utcCreated
+                }.id.value.toString()
+            }.also { uuid ->
+                LOGGER.info("New user is created, uuid: $uuid")
             }
+        } catch (_: ExposedSQLException) {
+            throw UsernameDuplicatedException()
+        }
 
-            UserDAO.new {
-                username = newUser.username
-                encryptedPassword = newUser.plainPassword!! // TODO:加密
-                school = newUser.school
-                grade = newUser.grade
-                realName = newUser.realName
-                gender = newUser.gender
-                githubHomepage = newUser.githubHomepage
-                email = newUser.email
-                avatarHashIndex = "" // TODO:设置默认头像
-                authority = newUser.authority
-                utcCreated = Clock.System.now()
-                utcUpdated = this.utcCreated
-            }
-        }.id.value.toString()
-
+    /**
+     * 根据userId（uuid）查询用户
+     */
     suspend fun queryUserByUUID(uuid: String): User =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
             UserDAO.findById(UUID.fromString(uuid)).let {
