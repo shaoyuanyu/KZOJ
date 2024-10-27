@@ -7,18 +7,16 @@ services:
       - local_data:/app/data
     environment:
         HOST: "0.0.0.0"
+        SESSION_STORAGE_PATH: "/app/data/.session"
         DB_URL: "jdbc:mysql://host.docker.internal:3307/kzoj"
         DB_USER: "root"
         DB_PASSWORD: "kzoj_db_test"
-        DATA_TESTCASE_PATH: "/app/data/testcase"
         MINIO_URL: "http://host.docker.internal:9000"
         MINIO_USER: "minio_user_test"
         MINIO_PASSWORD: "minio_password_test"
         GOJUDGE_URL: "http://host.docker.internal:5050"
     depends_on:
       db:
-        condition: service_healthy
-      minio:
         condition: service_healthy
   db:
     image: mysql

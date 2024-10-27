@@ -11,7 +11,6 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.UserIdPrincipal
 import io.ktor.server.auth.form
 import io.ktor.server.auth.session
-import io.ktor.server.response.respondRedirect
 import io.ktor.server.sessions.Sessions
 import io.ktor.server.sessions.cookie
 import io.ktor.server.sessions.directorySessionStorage
@@ -58,9 +57,9 @@ fun Application.configureSecurity(userService: UserService) {
                 session
             }
 
-            // session 失效，重定向到登录页面
             challenge {
-                call.respondRedirect("/user/login")
+                // call.respondRedirect("/user/login") // TODO: 重定向到登录页面
+                throw UserAuthorityException()
             }
         }
 

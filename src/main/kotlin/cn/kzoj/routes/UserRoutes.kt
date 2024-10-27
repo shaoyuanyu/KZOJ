@@ -13,7 +13,6 @@ import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveChannel
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.clear
 import io.ktor.server.sessions.get
@@ -105,7 +104,7 @@ fun Route.signup(userService: UserService) {
             UserSession(userId = uuid, username = newUser.username, userAuthority = UserAuthority.USER)
         )
 
-        call.respondRedirect("/home") // TODO: 重定向到主页
+        //call.respondRedirect("/home") // TODO: 重定向到主页
         call.response.status(HttpStatusCode.Created)
     }
 }
@@ -127,7 +126,7 @@ fun Route.updateSelfInfo(userService: UserService) {
 
         userService.updateUser(newUser)
 
-        call.respondRedirect("/me") // TODO: 重定向到用户信息页
+        //call.respondRedirect("/me") // TODO: 重定向到用户信息页
         call.response.status(HttpStatusCode.OK)
     }
 }
@@ -144,7 +143,7 @@ fun Route.login(userService: UserService) {
             UserSession(userId = uuid, username = user.username, userAuthority = user.authority)
         )
 
-        call.respondRedirect("/home") // TODO: 重定向到主页
+        //call.respondRedirect("/home") // TODO: 重定向到主页
         call.response.status(HttpStatusCode.OK)
     }
 }
@@ -155,7 +154,9 @@ fun Route.login(userService: UserService) {
 fun Route.logout() {
     post("/logout") {
         call.sessions.clear<UserSession>()
-        call.respondRedirect("/login") // TODO: 重定向到登录页
+
+        //call.respondRedirect("/login") // TODO: 重定向到登录页
+        call.response.status(HttpStatusCode.OK)
     }
 }
 
@@ -167,7 +168,10 @@ fun Route.uploadAvatar(userService: UserService) {
         // TODO: 需要限制文件大小
         val avatarFileInputStream = call.receiveChannel().toInputStream()
 
+
+
         val userSession = call.sessions.get<UserSession>()
+        println(userSession)
         if (userSession == null) {
             throw UserAuthorityException()
         }
