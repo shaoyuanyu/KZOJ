@@ -1,6 +1,7 @@
 package cn.kzoj.data.user
 
 import cn.kzoj.common.minio.MinioBucketConfig
+import cn.kzoj.exception.user.UserIdNotFoundException
 import cn.kzoj.exception.user.UsernameDuplicatedException
 import cn.kzoj.exception.user.UsernameNotFoundException
 import cn.kzoj.models.user.User
@@ -38,7 +39,7 @@ class UserService(
                     gender = newUser.gender
                     githubHomepage = newUser.githubHomepage
                     email = newUser.email
-                    avatarHashIndex = "" // TODO:设置默认头像
+                    avatarHashIndex = "default" // TODO:设置默认头像
                     authority = newUser.authority
                     utcCreated = Clock.System.now()
                     utcUpdated = this.utcCreated
@@ -63,6 +64,46 @@ class UserService(
                 it.exposeWithoutPasswd()
             }
         }
+
+    /**
+     * 更新用户信息
+     */
+    @Suppress("DuplicatedCode")
+    suspend fun updateUser(newUser: User) {
+        try {
+            newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+                UserDAO.findByIdAndUpdate(UUID.fromString(newUser.uuid)) {
+                    it.username = newUser.username
+                    it.encryptedPassword = newUser.plainPassword!! // TODO:加密
+                    it.school = newUser.school
+                    it.grade = newUser.grade
+                    it.realName = newUser.realName
+                    it.gender = newUser.gender
+                    it.githubHomepage = newUser.githubHomepage
+                    it.email = newUser.email
+                    it.authority = newUser.authority
+                    it.utcUpdated = Clock.System.now()
+                }
+            }
+        } catch (_: ExposedSQLException) {
+            throw UsernameDuplicatedException()
+        }
+    }
+
+    /**
+     * 删除用户
+     */
+    suspend fun deleteUser(userId: String) {
+        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            UserDAO.findById(UUID.fromString(userId)).let {
+                if (it == null) {
+                    throw UserIdNotFoundException()
+                }
+
+                it.delete()
+            }
+        }
+    }
 
     /**
      * 登录验证

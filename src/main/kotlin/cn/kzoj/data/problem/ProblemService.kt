@@ -1,7 +1,6 @@
 package cn.kzoj.data.problem
 
 import cn.kzoj.exception.problem.ProblemIdNotFoundException
-import cn.kzoj.exception.problem.ProblemIdNotIntException
 import cn.kzoj.exception.problem.ProblemPageIndexOutOfRangeException
 import cn.kzoj.exception.problem.ProblemTitleNotFoundException
 import cn.kzoj.models.problem.Problem
@@ -36,8 +35,8 @@ class ProblemService(
             }
         }.id.value
 
-    suspend fun deleteProblem(id: Int) =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+    suspend fun deleteProblem(id: Int) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemDAO.findById(id).let {
                 if (it == null) {
                     throw ProblemIdNotFoundException()
@@ -46,16 +45,12 @@ class ProblemService(
                 it.delete()
             }
         }
+    }
 
     @Suppress("DuplicatedCode")
     suspend fun updateProblem(newProblem: Problem) {
-        // TODO: 可能存在篡改id破坏数据库的行为
-        if (newProblem.id == null) {
-            throw ProblemIdNotIntException()
-        }
-
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.findByIdAndUpdate(newProblem.id) {
+            ProblemDAO.findByIdAndUpdate(newProblem.id!!) {
                 it.title = newProblem.title
                 it.author = newProblem.author
                 it.description = newProblem.description

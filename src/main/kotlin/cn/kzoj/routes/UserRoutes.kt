@@ -24,24 +24,26 @@ import io.ktor.utils.io.jvm.javaio.toInputStream
 fun Application.userRoutes(userService: UserService) {
     routing {
         route("/user") {
-            // User CRUD（限管理员）
-            authenticate("auth-session-admin") {
-                createUser(userService)
-            }
+            // 无权限限制
+            signup(userService) // 注册
+            getAvatar(userService) // 获取头像
 
-            // 普通用户注册/更新账户/登录/登出
-            signup(userService)
             authenticate("auth-form") {
-                login(userService)
-            }
-            authenticate("auth-session-user") {
-                logout()
+                login(userService) // 登录
             }
 
-            // 头像操作
+            // 普通用户
             authenticate("auth-session-user") {
-                uploadAvatar(userService)
-                getAvatar(userService)
+                updateSelfInfo(userService) // 更新自己的信息
+                logout() // 登出
+                uploadAvatar(userService) // 上传头像
+            }
+
+            // 管理员
+            authenticate("auth-session-admin") {
+                createUser(userService) // 创建用户
+                updateUser(userService) // 更新用户信息
+                deleteUser(userService) // 删除用户
             }
         }
     }
@@ -57,6 +59,32 @@ fun Route.createUser(userService: UserService) {
         userService.createUser(newUser)
 
         call.response.status(HttpStatusCode.Created)
+    }
+}
+
+/**
+ * 管理员更新用户信息
+ */
+fun Route.updateUser(userService: UserService) {
+    post("/update") {
+        val newUser = call.receive<User>()
+
+        userService.updateUser(newUser)
+
+        call.response.status(HttpStatusCode.OK)
+    }
+}
+
+/**
+ * 管理员删除用户
+ */
+fun Route.deleteUser(userService: UserService) {
+    delete("/{id}") {
+        val id = call.parameters["id"].toString()
+
+        userService.deleteUser(id)
+
+        call.response.status(HttpStatusCode.OK)
     }
 }
 
@@ -83,10 +111,25 @@ fun Route.signup(userService: UserService) {
 }
 
 /**
- * 用户信息更新
+ * 用户信息更新（普通用户更新自己的信息）
  */
-fun Route.userSelfUpdate(userService: UserService) {
+fun Route.updateSelfInfo(userService: UserService) {
+    post("/self/update") {
+        val userSession = call.sessions.get<UserSession>()
+        if (userSession == null) {
+            throw UserAuthorityException()
+        }
 
+        val newUser = call.receive<User>().copy(
+            uuid = userSession.userId,
+            authority = userSession.userAuthority
+        )
+
+        userService.updateUser(newUser)
+
+        call.respondRedirect("/me") // TODO: 重定向到用户信息页
+        call.response.status(HttpStatusCode.OK)
+    }
 }
 
 /**
@@ -139,14 +182,11 @@ fun Route.uploadAvatar(userService: UserService) {
  * 获取头像（输入流）
  */
 fun Route.getAvatar(userService: UserService) {
-    get("/avatar") {
-        val userSession = call.sessions.get<UserSession>()
-        if (userSession == null) {
-            throw UserAuthorityException()
-        }
+    get("/avatar/{id}") {
+        val id = call.parameters["id"].toString()
 
         call.respond(
-            userService.getAvatar(userSession.userId)
+            userService.getAvatar(id)
         )
     }
 }
