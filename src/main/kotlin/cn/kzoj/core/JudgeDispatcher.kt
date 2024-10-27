@@ -21,7 +21,7 @@ import java.util.LinkedList
 import java.util.Queue
 import kotlin.collections.ArrayList
 
-internal val LOGGER = KtorSimpleLogger("cn.kzoj.JudgeDispatcher")
+internal val LOGGER = KtorSimpleLogger("cn.kzoj.core.JudgeDispatcher")
 
 @Suppress("OPT_IN_USAGE")
 class JudgeDispatcher(
