@@ -11,6 +11,7 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveChannel
+import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.clear
@@ -38,6 +39,7 @@ fun Application.userRoutes(userService: UserService) {
             // 头像操作
             authenticate("auth-session-user") {
                 uploadAvatar(userService)
+                getAvatar(userService)
             }
         }
     }
@@ -59,10 +61,34 @@ fun Route.createUser(userService: UserService) {
 }
 
 /**
+ * 用户登录
+ */
+fun Route.login(userService: UserService) {
+    post("/login") {
+        val uuid = call.principal<UserIdPrincipal>()?.name.toString()
+        val user = userService.queryUserByUUID(uuid)
+
+        call.sessions.set(
+            UserSession(userId = uuid, username = user.username, userAuthority = user.authority)
+        )
+
+        call.respondRedirect("/home") // TODO: 重定向到主页
+        call.response.status(HttpStatusCode.OK)
+    }
+}
+
+fun Route.logout() {
+    post("/logout") {
+        call.sessions.clear<UserSession>()
+        call.respondRedirect("/login") // TODO: 重定向到登录页
+    }
+}
+
+/**
  * 上传头像（图片文件）
  */
 fun Route.uploadAvatar(userService: UserService) {
-    post("/avatar/upload") {
+    post("/avatar") {
         // TODO: 需要限制文件大小
         val avatarFileInputStream = call.receiveChannel().toInputStream()
 
@@ -78,27 +104,17 @@ fun Route.uploadAvatar(userService: UserService) {
 }
 
 /**
- * 用户登录
+ * 获取头像（输入流）
  */
-fun Route.login(userService: UserService) {
-    post("/login") {
-        val uuid = call.principal<UserIdPrincipal>()?.name.toString()
-        val user = userService.queryUserByUUID(uuid)
+fun Route.getAvatar(userService: UserService) {
+    get("/avatar") {
+        val userSession = call.sessions.get<UserSession>()
+        if (userSession == null) {
+            throw UserAuthorityException()
+        }
 
-        println(user)
-
-        call.sessions.set(
-            UserSession(userId = uuid, username = user.username, userAuthority = user.authority)
+        call.respond(
+            userService.getAvatar(userSession.userId)
         )
-
-        call.respondRedirect("/home") // TODO: 重定向到主页
-        call.response.status(HttpStatusCode.OK)
-    }
-}
-
-fun Route.logout() {
-    post("/logout") {
-        call.sessions.clear<UserSession>()
-        call.respondRedirect("/login") // TODO: 重定向到登录页
     }
 }

@@ -5,6 +5,7 @@ import cn.kzoj.exception.user.UsernameDuplicatedException
 import cn.kzoj.exception.user.UsernameNotFoundException
 import cn.kzoj.models.user.User
 import io.ktor.server.plugins.NotFoundException
+import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import kotlinx.coroutines.Dispatchers
@@ -85,7 +86,6 @@ class UserService(
      * userId 为 uuid
      */
     suspend fun uploadAvatar(userId: String, avatarFileInputStream: InputStream) {
-        // TODO:根据 uuid 生成 hash index
         val avatarHashIndex = userId
 
         minioClient.putObject(
@@ -97,6 +97,8 @@ class UserService(
                 .build()
         )
 
+        avatarFileInputStream.close()
+
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
             UserDAO.findByIdAndUpdate(UUID.fromString(userId)) {
                 it.avatarHashIndex = avatarHashIndex
@@ -104,5 +106,14 @@ class UserService(
         }
     }
 
-//    suspend fun getAvatar(uuid: String) {}
+    /**
+     * 获取头像文件输入流
+     */
+    fun getAvatar(userId: String): InputStream =
+        minioClient.getObject(
+            GetObjectArgs.builder()
+                .bucket(MinioBucketConfig.BucketNames.AVATARS)
+                .`object`(userId)
+                .build()
+        )
 }
