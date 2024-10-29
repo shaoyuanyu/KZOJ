@@ -94,6 +94,11 @@ class ProblemService(
             }.toList().expose()
         }
 
+    suspend fun queryProblemTotality(): Long =
+        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            ProblemDAO.all().count()
+        }
+
     // TODO: 增加orderedBy参数及对应功能
     suspend fun queryProblemByPage(pageIndex: Int, pageSize: Int = 20, isAscending: Boolean = true): List<Problem> =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {

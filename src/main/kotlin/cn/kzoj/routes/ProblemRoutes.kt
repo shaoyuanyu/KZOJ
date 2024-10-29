@@ -27,6 +27,7 @@ fun Application.problemRoutes(problemService: ProblemService) {
             }
             queryProblemById(problemService)
             queryProblemByTitle(problemService)
+            queryProblemTotality(problemService)
             queryProblemByPage(problemService)
         }
     }
@@ -37,15 +38,15 @@ fun Application.problemRoutes(problemService: ProblemService) {
  *
  * 接收题目：Problem
  *
- * 返回id：Int
+ * 返回id：String
  */
 fun Route.createProblem(problemService: ProblemService) {
     post("/create") {
         val newProblem = call.receive<Problem>()
 
-        problemService.createProblem(newProblem)
-
-        call.response.status(HttpStatusCode.Created)
+        call.respondText(
+            problemService.createProblem(newProblem).toString()
+        )
     }
 }
 
@@ -143,6 +144,17 @@ fun Route.queryProblemByTitle(problemService: ProblemService) {
 
         call.respond(
             problemService.queryProblemByTitle(title)
+        )
+    }
+}
+
+/**
+ * 查询题目总数（未筛选）
+ */
+fun Route.queryProblemTotality(problemService: ProblemService) {
+    get("/queryTotality") {
+        call.respondText(
+            problemService.queryProblemTotality().toString()
         )
     }
 }
