@@ -42,7 +42,15 @@ fun Application.problemRoutes(problemService: ProblemService) {
  */
 fun Route.createProblem(problemService: ProblemService) {
     post("/create") {
-        val newProblem = call.receive<Problem>()
+        // 读 session
+        val userSession = call.sessions.get<UserSession>()
+        if (userSession == null) {
+            throw UserAuthorityException()
+        }
+
+        val newProblem = call.receive<Problem>().copy(
+            createdByUser = userSession.userId
+        )
 
         call.respondText(
             problemService.createProblem(newProblem).toString()
