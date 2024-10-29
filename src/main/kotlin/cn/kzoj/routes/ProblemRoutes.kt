@@ -126,9 +126,8 @@ fun Route.updateProblem(problemService: ProblemService) {
  * 返回题目: Problem
  */
 fun Route.queryProblemById(problemService: ProblemService) {
-    get("/get/{id}") {
+    get("/{id}") {
         val id = call.parameters["id"].toString().toIntOrNull()
-
         if (id == null) {
             throw ProblemIdNotIntException()
         }
@@ -147,8 +146,8 @@ fun Route.queryProblemById(problemService: ProblemService) {
  * 返回题目列表：List<Problem>
  */
 fun Route.queryProblemByTitle(problemService: ProblemService) {
-    get("/queryByTitle/{title}") {
-        val title = call.parameters["title"].toString()
+    get("/title/{title_key_words}") {
+        val title = call.parameters["title_key_words"].toString()
 
         call.respond(
             problemService.queryProblemByTitle(title)
@@ -160,7 +159,7 @@ fun Route.queryProblemByTitle(problemService: ProblemService) {
  * 查询题目总数（未筛选）
  */
 fun Route.queryProblemTotality(problemService: ProblemService) {
-    get("/queryTotality") {
+    get("/totality") {
         call.respondText(
             problemService.queryProblemTotality().toString()
         )
@@ -178,7 +177,7 @@ fun Route.queryProblemTotality(problemService: ProblemService) {
  * 返回题目列表：List<Problem>
  */
 fun Route.queryProblemByPage(problemService: ProblemService) {
-    get("/queryByPage") {
+    get("/page") {
         val pageIndex = call.request.queryParameters["pageIndex"].toString().toIntOrNull()
         val pageSize = call.request.queryParameters["pageSize"].toString().toIntOrNull()
         val isAscending = when (call.request.queryParameters["isAscending"].toString()) {

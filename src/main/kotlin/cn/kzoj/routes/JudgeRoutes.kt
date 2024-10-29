@@ -14,8 +14,7 @@ import io.ktor.server.routing.routing
 
 fun Application.judgeRoutes(judgeDispatcher: JudgeDispatcher) {
     routing {
-        // TODO: 暂时沿用"/problem"路径，待API基本稳定再统一修改
-        route("/problem") {
+        route("/judge") {
             authenticate("auth-session-user") {
                 submitProblem(judgeDispatcher)
                 queryJudgeStatus(judgeDispatcher)
@@ -50,7 +49,7 @@ fun Route.submitProblem(judgeDispatcher: JudgeDispatcher) {
  * 返回提交收据: SubmitReceipt
  */
 fun Route.queryJudgeStatus(judgeDispatcher: JudgeDispatcher) {
-    get("/judgeStatus/{judgeId}") {
+    get("/status/{judgeId}") {
         val judgeId = call.parameters["judgeId"].toString()
 
         call.respond(
@@ -67,7 +66,7 @@ fun Route.queryJudgeStatus(judgeDispatcher: JudgeDispatcher) {
  * 返回判题结果: JudgeResult
  */
 fun Route.queryJudgeResult(judgeDispatcher: JudgeDispatcher) {
-    get("/judgeResult/{judgeId}") {
+    get("/result/{judgeId}") {
         val judgeId = call.parameters["judgeId"].toString()
 
         call.respond(
