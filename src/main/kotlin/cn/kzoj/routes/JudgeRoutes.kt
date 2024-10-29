@@ -3,7 +3,7 @@ package cn.kzoj.routes
 import cn.kzoj.core.JudgeDispatcher
 import cn.kzoj.models.submit.SubmitRequest
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -16,9 +16,11 @@ fun Application.judgeRoutes(judgeDispatcher: JudgeDispatcher) {
     routing {
         // TODO: 暂时沿用"/problem"路径，待API基本稳定再统一修改
         route("/problem") {
-            submitProblem(judgeDispatcher)
-            queryJudgeStatus(judgeDispatcher)
-            queryJudgeResult(judgeDispatcher)
+            authenticate("auth-session-user") {
+                submitProblem(judgeDispatcher)
+                queryJudgeStatus(judgeDispatcher)
+                queryJudgeResult(judgeDispatcher)
+            }
         }
     }
 }
