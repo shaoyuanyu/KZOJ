@@ -1,0 +1,8 @@
+FROM criyle/go-judge:latest
+
+RUN sed -i s_deb.debian.org_mirrors.tuna.tsinghua.edu.cn_ /etc/apt/sources.list.d/debian.sources \
+  && apt-get update \
+  && apt-get upgrade -yqq \
+  && apt-get install -yqq build-essential \
+  && apt-get autoclean \
+  && rm -rf /var/lib/apt/lists/*
