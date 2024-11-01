@@ -33,6 +33,7 @@ fun Application.userRoutes(userService: UserService) {
 
             // 普通用户
             authenticate("auth-session-user") {
+                getSelfInfo(userService) // 获取自己的信息
                 updateSelfInfo(userService) // 更新自己的信息
                 logout() // 登出
                 uploadAvatar(userService) // 上传头像
@@ -99,13 +100,29 @@ fun Route.signup(userService: UserService) {
         )
 
         val uuid = userService.createUser(newUser)
-
         call.sessions.set(
             UserSession(userId = uuid, username = newUser.username, userAuthority = UserAuthority.USER)
         )
+        
+        call.respond(
+            userService.queryUserByUUID(uuid)
+        )
+    }
+}
 
-        //call.respondRedirect("/home") // TODO: 重定向到主页
-        call.response.status(HttpStatusCode.Created)
+/**
+ * 用户信息获取（普通用户获取自己的信息）
+ */
+fun Route.getSelfInfo(userService: UserService) {
+    get("/self") {
+        val userSession = call.sessions.get<UserSession>()
+        if (userSession == null) {
+            throw UserAuthorityException()
+        }
+
+        call.respond(
+            userService.queryUserByUUID(userSession.userId)
+        )
     }
 }
 
@@ -124,10 +141,9 @@ fun Route.updateSelfInfo(userService: UserService) {
             authority = userSession.userAuthority
         )
 
-        userService.updateUser(newUser)
-
-        //call.respondRedirect("/me") // TODO: 重定向到用户信息页
-        call.response.status(HttpStatusCode.OK)
+        call.respond(
+            userService.updateUser(newUser)
+        )
     }
 }
 
@@ -138,13 +154,10 @@ fun Route.login(userService: UserService) {
     post("/login") {
         val uuid = call.principal<UserIdPrincipal>()?.name.toString()
         val user = userService.queryUserByUUID(uuid)
-
         call.sessions.set(
             UserSession(userId = uuid, username = user.username, userAuthority = user.authority)
         )
-
-        //call.respondRedirect("/home") // TODO: 重定向到主页
-        call.response.status(HttpStatusCode.OK)
+        call.respond(user)
     }
 }
 
@@ -154,8 +167,6 @@ fun Route.login(userService: UserService) {
 fun Route.logout() {
     post("/logout") {
         call.sessions.clear<UserSession>()
-
-        //call.respondRedirect("/login") // TODO: 重定向到登录页
         call.response.status(HttpStatusCode.OK)
     }
 }
