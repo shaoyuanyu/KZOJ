@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":api"))
+    implementation(project(":dto"))
     implementation(project(":persistence"))
 
     implementation(libs.kotlinx.coroutines.core)

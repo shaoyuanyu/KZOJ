@@ -1,9 +1,9 @@
 package cn.kzoj.persistence
 
-import cn.kzoj.api.exception.user.UserIdNotFoundException
-import cn.kzoj.api.exception.user.UsernameDuplicatedException
-import cn.kzoj.api.exception.user.UsernameNotFoundException
-import cn.kzoj.api.dto.user.User
+import cn.kzoj.dto.exception.user.UserIdNotFoundException
+import cn.kzoj.dto.exception.user.UsernameDuplicatedException
+import cn.kzoj.dto.exception.user.UsernameNotFoundException
+import cn.kzoj.dto.entity.user.User
 import cn.kzoj.persistence.database.user.UserDAO
 import cn.kzoj.persistence.database.user.UserTable
 import cn.kzoj.persistence.database.user.expose

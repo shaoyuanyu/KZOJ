@@ -1,6 +1,6 @@
 package cn.kzoj.persistence.database.problem
 
-import cn.kzoj.api.dto.problem.Problem
+import cn.kzoj.dto.entity.problem.Problem
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

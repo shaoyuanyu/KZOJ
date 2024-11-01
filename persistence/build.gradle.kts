@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":api"))
+    implementation(project(":dto"))
 
     implementation(libs.bundles.exposed)
     implementation(libs.hikaricp)

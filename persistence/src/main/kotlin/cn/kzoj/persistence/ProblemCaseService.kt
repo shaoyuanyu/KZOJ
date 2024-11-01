@@ -1,6 +1,6 @@
 package cn.kzoj.persistence
 
-import cn.kzoj.api.dto.problemcase.ProblemCase
+import cn.kzoj.dto.entity.problemcase.ProblemCase
 import cn.kzoj.persistence.database.problemcase.ProblemCaseDAO
 import cn.kzoj.persistence.database.problemcase.ProblemCaseTable
 import cn.kzoj.persistence.database.problemcase.expose

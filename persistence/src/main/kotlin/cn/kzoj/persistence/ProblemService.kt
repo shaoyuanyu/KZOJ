@@ -1,9 +1,9 @@
 package cn.kzoj.persistence
 
-import cn.kzoj.api.exception.problem.ProblemIdNotFoundException
-import cn.kzoj.api.exception.problem.ProblemPageIndexOutOfRangeException
-import cn.kzoj.api.exception.problem.ProblemTitleNotFoundException
-import cn.kzoj.api.dto.problem.Problem
+import cn.kzoj.dto.exception.problem.ProblemIdNotFoundException
+import cn.kzoj.dto.exception.problem.ProblemPageIndexOutOfRangeException
+import cn.kzoj.dto.exception.problem.ProblemTitleNotFoundException
+import cn.kzoj.dto.entity.problem.Problem
 import cn.kzoj.persistence.database.problem.ProblemDAO
 import cn.kzoj.persistence.database.problem.ProblemTable
 import cn.kzoj.persistence.database.problem.expose

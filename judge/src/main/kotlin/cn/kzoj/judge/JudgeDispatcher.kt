@@ -1,13 +1,13 @@
 package cn.kzoj.judge
 
-import cn.kzoj.api.dto.judge.JudgeStatus
+import cn.kzoj.dto.entity.judge.JudgeStatus
 import cn.kzoj.persistence.ProblemCaseService
-import cn.kzoj.api.dto.judge.JudgeRequest
-import cn.kzoj.api.dto.judge.SubmitRequest
-import cn.kzoj.api.dto.judge.JudgeResult
-import cn.kzoj.api.dto.problemcase.ProblemCase
-import cn.kzoj.api.dto.judge.SubmitReceipt
-import cn.kzoj.api.exception.judge.JudgeIdNotFoundException
+import cn.kzoj.dto.entity.judge.JudgeRequest
+import cn.kzoj.dto.entity.judge.SubmitRequest
+import cn.kzoj.dto.entity.judge.JudgeResult
+import cn.kzoj.dto.entity.problemcase.ProblemCase
+import cn.kzoj.dto.entity.judge.SubmitReceipt
+import cn.kzoj.dto.exception.judge.JudgeIdNotFoundException
 import io.ktor.util.logging.KtorSimpleLogger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.GlobalScope

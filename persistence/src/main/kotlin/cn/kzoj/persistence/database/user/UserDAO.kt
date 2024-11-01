@@ -1,6 +1,6 @@
 package cn.kzoj.persistence.database.user
 
-import cn.kzoj.api.dto.user.User
+import cn.kzoj.dto.entity.user.User
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

@@ -3,7 +3,4 @@ plugins {
 }
 rootProject.name = "KZOJ"
 
-include("web")
-include("persistence")
-include("judge")
-include("api")
+include("app", "dto", "judge", "persistence")

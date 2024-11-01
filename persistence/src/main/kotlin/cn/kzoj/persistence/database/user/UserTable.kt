@@ -1,6 +1,6 @@
 package cn.kzoj.persistence.database.user
 
-import cn.kzoj.api.dto.user.UserAuthority
+import cn.kzoj.dto.entity.user.UserAuthority
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
