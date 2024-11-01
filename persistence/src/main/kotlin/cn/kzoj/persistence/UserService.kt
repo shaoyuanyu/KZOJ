@@ -1,6 +1,5 @@
 package cn.kzoj.persistence
 
-import cn.kzoj.persistence.minio.MinioBucketConfig
 import cn.kzoj.api.exception.user.UserIdNotFoundException
 import cn.kzoj.api.exception.user.UsernameDuplicatedException
 import cn.kzoj.api.exception.user.UsernameNotFoundException
@@ -9,9 +8,9 @@ import cn.kzoj.persistence.database.user.UserDAO
 import cn.kzoj.persistence.database.user.UserTable
 import cn.kzoj.persistence.database.user.expose
 import cn.kzoj.persistence.database.user.exposeWithoutPasswd
-import io.minio.GetObjectArgs
+import cn.kzoj.persistence.minio.avatar.getAvatarObject
+import cn.kzoj.persistence.minio.avatar.putAvatarObject
 import io.minio.MinioClient
-import io.minio.PutObjectArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -140,14 +139,7 @@ class UserService(
     suspend fun uploadAvatar(userId: String, avatarFileInputStream: InputStream) {
         val avatarHashIndex = userId
 
-        minioClient.putObject(
-            PutObjectArgs.builder()
-                .bucket(MinioBucketConfig.BucketNames.AVATARS)
-                .`object`(avatarHashIndex)
-                .stream(avatarFileInputStream, -1, 10485760)
-                .contentType("image/jpg")
-                .build()
-        )
+        putAvatarObject(minioClient, avatarHashIndex, avatarFileInputStream)
 
         avatarFileInputStream.close()
 
@@ -161,11 +153,5 @@ class UserService(
     /**
      * 获取头像文件输入流
      */
-    fun getAvatar(userId: String): InputStream =
-        minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket(MinioBucketConfig.BucketNames.AVATARS)
-                .`object`(userId)
-                .build()
-        )
+    fun getAvatar(userId: String): InputStream = getAvatarObject(minioClient, userId)
 }

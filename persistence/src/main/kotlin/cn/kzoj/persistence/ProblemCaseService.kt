@@ -1,11 +1,10 @@
 package cn.kzoj.persistence
 
-import cn.kzoj.persistence.minio.MinioBucketConfig
 import cn.kzoj.api.dto.problemcase.ProblemCase
 import cn.kzoj.persistence.database.problemcase.ProblemCaseDAO
 import cn.kzoj.persistence.database.problemcase.ProblemCaseTable
 import cn.kzoj.persistence.database.problemcase.expose
-import io.minio.GetObjectArgs
+import cn.kzoj.persistence.minio.problemcase.getProblemCaseObject
 import io.minio.MinioClient
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -25,21 +24,11 @@ class ProblemCaseService(
         }
 
     fun getProblemCaseContent(path: String, caseInFilename: String, caseOutFilename:String): Pair<String, String> =
-        minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
-                .`object`("$path/$caseInFilename")
-                .build()
-        ).run {
+        getProblemCaseObject(minioClient, "$path/$caseInFilename").run {
             val caseIn = readAllBytes().toString(Charsets.UTF_8)
             close()
             caseIn
-        } to minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
-                .`object`("$path/$caseOutFilename")
-                .build()
-        ).run {
+        } to getProblemCaseObject(minioClient, "$path/$caseOutFilename").run {
             val caseOut = readAllBytes().toString(Charsets.UTF_8)
             close()
             caseOut
