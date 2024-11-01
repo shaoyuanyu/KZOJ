@@ -99,13 +99,13 @@ fun Route.signup(userService: UserService) {
             authority = UserAuthority.USER
         )
 
-        val uuid = userService.createUser(newUser)
+        val userId = userService.createUser(newUser)
         call.sessions.set(
-            UserSession(userId = uuid, username = newUser.username, userAuthority = UserAuthority.USER)
+            UserSession(userId = userId, username = newUser.username, userAuthority = UserAuthority.USER)
         )
         
         call.respond(
-            userService.queryUserByUUID(uuid)
+            userService.queryUserByUUID(userId)
         )
     }
 }
@@ -152,11 +152,14 @@ fun Route.updateSelfInfo(userService: UserService) {
  */
 fun Route.login(userService: UserService) {
     post("/login") {
-        val uuid = call.principal<UserIdPrincipal>()?.name.toString()
-        val user = userService.queryUserByUUID(uuid)
+        val userId = call.principal<UserIdPrincipal>()?.name.toString()
+
+        val user = userService.queryUserByUUID(userId)
+
         call.sessions.set(
-            UserSession(userId = uuid, username = user.username, userAuthority = user.authority)
+            UserSession(userId = userId, username = user.username, userAuthority = user.authority)
         )
+
         call.respond(user)
     }
 }
