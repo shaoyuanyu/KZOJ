@@ -1,4 +1,5 @@
 name: "kzoj"
+
 volumes:
   app:
     driver: "local"
@@ -6,6 +7,7 @@ volumes:
     driver: "local"
   minio:
     driver: "local"
+
 services:
   app:
     build:

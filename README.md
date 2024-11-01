@@ -4,29 +4,24 @@
 
 首先安装 Docker 和 Docker compose。
 
-### 启动服务容器
+### 配置环境变量（可选）
 
 默认情况下，go-judge 使用 5050 端口，mysql 使用 3306 端口，minio 使用 9000 和 9001 端口。
 
-```
-$ docker compose up -d sandbox mysql minio
-```
-
-如果需要修改容器映射的端口号，拷贝一份`.env.example`文件，并修改对应的端口：
+如果需要修改容器映射的端口号，拷贝一份`.env.default`文件，并修改对应的端口：
 
 ```shell
-$ cp .env.example .env
+$ cp .env.default .env
 ```
 
 注意：
-
 1. 无论怎么修改端口，都不要修改`.env.docker`中的地址；
 2. 修改后记得更新环境变量，或者更新`application.conf`中的配置：
    ```shell
    $ export $(grep -v '^#' .env | xargs)
    ```
 
-### 配置网络代理
+### 配置网络代理（可选）
 
 如果 docker 构建镜像卡住，修改`/etc/systemd/system/docker.service.d/http-proxy.conf`后重启 docker engine：
 
@@ -49,6 +44,12 @@ systemProp.https.proxyHost=127.0.0.1
 systemProp.https.proxyPort=7890
 ```
 
+### 启动相关服务容器
+
+```shell
+$ docker compose up -d sandbox mysql minio
+```
+
 ### 启动网页端容器
 
 ```shell
@@ -67,6 +68,12 @@ $ ./gradlew run
 
 ```shell
 $ docker compose up app
+```
+
+容器编译并运行：
+
+```shell
+$ docker compose up --build app
 ```
 
 ## 生产环境配置
