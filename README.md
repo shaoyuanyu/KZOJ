@@ -16,7 +16,7 @@ $ cp .env.default .env
 
 注意：
 1. 无论怎么修改端口，都不要修改`.env.docker`中的地址；
-2. 修改后记得更新环境变量，或者更新`application.conf`中的配置：
+2. 对于本地开发，可以在`Idea`的`Run/Debug Configuration`中设置环境变量，也可根据`.env`更新环境变量（使用容器运行则无需考虑此步骤）：
    ```shell
    $ export $(grep -v '^#' .env | xargs)
    ```
