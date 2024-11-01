@@ -43,6 +43,8 @@ gradle-user-home
 
 scan-journal.log
 
+.env
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,macos,windows,kotlin,intellij+all,gradle,visualstudiocode,netbeans
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,windows,kotlin,intellij+all,gradle,visualstudiocode,netbeans

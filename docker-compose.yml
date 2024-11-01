@@ -1,56 +1,78 @@
-services:
-  web:
-    build: .
-    ports:
-      - "8080:8080"
-    volumes:
-      - local_data:/app/data
-    environment:
-        HOST: "0.0.0.0"
-        SESSION_STORAGE_PATH: "/app/data/.session"
-        DB_URL: "jdbc:mysql://host.docker.internal:3307/kzoj"
-        DB_USER: "root"
-        DB_PASSWORD: "kzoj_db_test"
-        MINIO_URL: "http://host.docker.internal:9000"
-        MINIO_USER: "minio_user_test"
-        MINIO_PASSWORD: "minio_password_test"
-        GOJUDGE_URL: "http://host.docker.internal:5050"
-    depends_on:
-      db:
-        condition: service_healthy
-  db:
-    image: mysql
-    restart: always
-    volumes:
-      - kzoj_db:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: "kzoj_db_test"
-    ports:
-      - "3307:3306"
-    healthcheck:
-        test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-        timeout: 20s
-        retries: 10
-  minio:
-    image: minio/minio
-    restart: always
-    command: server --console-address ":9001" /data
-    privileged: true
-    volumes:
-      - minio_data:/data
-    environment:
-      MINIO_ROOT_USER: "minio_user_test"
-      MINIO_ROOT_PASSWORD: "minio_password_test"
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-  sandbox:
-    build: ./sandboxDockerConfig
-    privileged: true
-    shm_size: 256m
-    ports:
-      - "5050:5050"
+name: "kzoj"
 volumes:
-  local_data:
-  kzoj_db:
-  minio_data:
+  app:
+    driver: "local"
+  mysql:
+    driver: "local"
+  minio:
+    driver: "local"
+services:
+  app:
+    build:
+      context: "."
+    env_file:
+      - path: "./.env.default"
+        required: true
+      - path: "./.env.docker"
+        required: true
+      - path: "./.env"
+        required: false
+    environment:
+      - "KZOJ_SESSION_STORAGE_PATH=/app/data/.sessions"
+    volumes:
+      - "app:/app/data"
+    ports:
+      - "0.0.0.0:${KZOJ_APP_PORT:-8080}:8080"
+    depends_on:
+      mysql:
+        condition: "service_healthy"
+      minio:
+        condition: "service_healthy"
+  web:
+    build:
+      context: "https://git.nju.edu.cn/doowzs/kzoj.react.git#release"
+    ports:
+      - "0.0.0.0:${KZOJ_WEB_PORT:-3000}:3000"
+  sandbox:
+    build:
+      context: "."
+      dockerfile: "Dockerfile.sandbox"
+    privileged: true
+    shm_size: "256m"
+    ports:
+      - "127.0.0.1:${GO_JUDGE_PORT:-5050}:5050"
+  mysql:
+    image: "bitnami/mysql:9.0"
+    restart: "unless-stopped"
+    env_file:
+      - path: "./.env.default"
+        required: true
+      - path: "./.env"
+        required: false
+    volumes:
+      - "mysql:/bitnami/mysql/data"
+    ports:
+      - "127.0.0.1:${MYSQL_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: "1m"
+      timeout: "10s"
+      start_period: "30s"
+  minio:
+    image: "bitnami/minio:2024.10.29"
+    restart: "unless-stopped"
+    volumes:
+      - "minio:/bitnami/minio/data"
+    env_file:
+      - path: "./.env.default"
+        required: true
+      - path: "./.env"
+        required: false
+    ports:
+      - "127.0.0.1:${MINIO_API_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: "1m"
+      timeout: "10s"
+      start_period: "30s"
