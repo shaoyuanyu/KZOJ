@@ -6,10 +6,11 @@ ENV GRADLE_USER_HOME=/home/gradle/cache_home
 # 拷贝各模块gradle配置
 COPY build.gradle.kts gradle.properties settings.gradle.kts /home/gradle/app/
 COPY gradle/libs.versions.toml /home/gradle/app/gradle/
-COPY api/build.gradle.kts /home/gradle/app/api/
+COPY app/build.gradle.kts /home/gradle/app/app/
+COPY dbConvertor/build.gradle.kts /home/gradle/app/dbConvertor/
+COPY dto/build.gradle.kts /home/gradle/app/dto/
 COPY judge/build.gradle.kts /home/gradle/app/judge/
 COPY persistence/build.gradle.kts /home/gradle/app/persistence/
-COPY web/build.gradle.kts /home/gradle/app/web/
 
 WORKDIR /home/gradle/app
 RUN gradle clean build -i --stacktrace
@@ -29,5 +30,5 @@ RUN gradle buildFatJar --no-daemon
 FROM amazoncorretto:21 AS runtime
 EXPOSE 8080:8080
 RUN mkdir /app
-COPY --from=build /home/gradle/src/web/build/libs/*.jar /app/kzoj.jar
+COPY --from=build /home/gradle/src/app/build/libs/*.jar /app/kzoj.jar
 ENTRYPOINT ["java","-jar","/app/kzoj.jar"]
