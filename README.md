@@ -6,20 +6,25 @@
 
 ### 配置环境变量（可选）
 
-默认情况下，go-judge 使用 5050 端口，mysql 使用 3306 端口，minio 使用 9000 和 9001 端口。
+默认情况下，如`.env.default`文件声明的，go-judge 使用 5050 端口，mysql 使用 3306 端口，minio 使用 9000 和 9001 端口。
 
-如果需要修改容器映射的端口号，拷贝一份`.env.default`文件，并修改对应的端口：
+如果需要修改环境变量，拷贝一份`.env.default`文件并命名`.env`，在`.env`中修改：
 
 ```shell
 $ cp .env.default .env
 ```
 
-注意：
-1. 无论怎么修改端口，都不要修改`.env.docker`中的地址；
-2. 对于本地开发，可以在`Idea`的`Run/Debug Configuration`中设置环境变量，也可根据`.env`更新环境变量（使用容器运行则无需考虑此步骤）：
-   ```shell
-   $ export $(grep -v '^#' .env | xargs)
-   ```
+请**不要**修改`.env.docker`和`.env.default`文件。
+
+#### Docker 运行
+
+Docker compose 会自行解析`.env.default` `.env.docker` `.env`中声明的环境变量。
+
+#### 本地运行
+
+推荐在`Idea`的`Run/Debug Configuration`中设置从`.env`文件读取环境变量。
+
+如果修改了容器映射的端口号，还需要手动添加`GO_JUDGE_URL` `MYSQL_JDBC_URL` `MINIO_SERVER_URL`中相应的环境变量。
 
 ### 配置网络代理（可选）
 
