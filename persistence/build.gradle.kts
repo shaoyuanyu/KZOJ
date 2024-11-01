@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation(project(":api"))
+
     implementation(libs.bundles.exposed)
     implementation(libs.hikaricp)
     implementation(libs.kotlinx.datetime)

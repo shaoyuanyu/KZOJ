@@ -19,7 +19,7 @@ ktor {
         archiveFileName.set("kzoj.fat.jar")
     }
     docker {
-        jreVersion.set(JavaVersion.VERSION_18)
+        jreVersion.set(JavaVersion.VERSION_21)
     }
 }
 
