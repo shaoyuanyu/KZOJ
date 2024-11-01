@@ -4,3 +4,4 @@ plugins {
 rootProject.name = "KZOJ"
 
 include("app", "dto", "judge", "persistence")
+include("dbConvertor")
