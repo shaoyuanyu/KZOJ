@@ -1,10 +1,10 @@
 package cn.kzoj.app.routes
 
-import cn.kzoj.persistence.UserService
 import cn.kzoj.dto.exception.user.UserAuthorityException
 import cn.kzoj.dto.user.User
 import cn.kzoj.dto.user.UserAuthority
 import cn.kzoj.dto.user.UserSession
+import cn.kzoj.persistence.UserService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.UserIdPrincipal
@@ -103,7 +103,7 @@ fun Route.signup(userService: UserService) {
         call.sessions.set(
             UserSession(userId = userId, username = newUser.username, userAuthority = UserAuthority.USER)
         )
-        
+
         call.respond(
             userService.queryUserByUUID(userId)
         )
@@ -181,7 +181,6 @@ fun Route.uploadAvatar(userService: UserService) {
     post("/avatar") {
         // TODO: 需要限制文件大小
         val avatarFileInputStream = call.receiveChannel().toInputStream()
-
 
 
         val userSession = call.sessions.get<UserSession>()

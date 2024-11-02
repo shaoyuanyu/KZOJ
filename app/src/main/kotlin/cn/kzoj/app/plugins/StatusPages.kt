@@ -1,7 +1,7 @@
 package cn.kzoj.app.plugins
 
-import cn.kzoj.dto.exception.basic.BasicNotFoundException
 import cn.kzoj.dto.exception.basic.BasicBadRequestException
+import cn.kzoj.dto.exception.basic.BasicNotFoundException
 import cn.kzoj.dto.exception.basic.BasicUnauthorizedException
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application

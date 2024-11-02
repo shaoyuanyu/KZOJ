@@ -11,11 +11,11 @@ fun getProblemCaseObject(
     minioClient: MinioClient,
     name: String
 ) = minioClient.getObject(
-        GetObjectArgs.builder()
-            .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
-            .`object`(name)
-            .build()
-    )
+    GetObjectArgs.builder()
+        .bucket(MinioBucketConfig.BucketNames.PROBLEM_CASES)
+        .`object`(name)
+        .build()
+)
 
 fun putProblemCaseObject(
     minioClient: MinioClient,

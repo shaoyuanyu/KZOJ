@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object ProblemTable: IntIdTable("problem") {
+object ProblemTable : IntIdTable("problem") {
 
     val title: Column<String> = varchar("title", 256).index()
 

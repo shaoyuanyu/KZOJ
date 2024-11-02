@@ -1,10 +1,10 @@
 package cn.kzoj.app.plugins
 
 import cn.kzoj.dto.exception.user.PasswordWrongException
-import cn.kzoj.persistence.UserService
 import cn.kzoj.dto.exception.user.UserAuthorityException
 import cn.kzoj.dto.user.UserAuthority
 import cn.kzoj.dto.user.UserSession
+import cn.kzoj.persistence.UserService
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -22,7 +22,7 @@ fun Application.configureSecurity(userService: UserService) {
     install(Sessions) {
         cookie<UserSession>("user_session", directorySessionStorage(File(sessionStoragePath))) {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 600 // TODO: 约定有效期
+            cookie.maxAgeInSeconds = 600 // TODO: 生产环境下 60 * 60 * 24 * 30 一个月
         }
     }
 
@@ -53,7 +53,6 @@ fun Application.configureSecurity(userService: UserService) {
             }
 
             challenge {
-                // call.respondRedirect("/user/login") // TODO: 重定向到登录页面
                 throw UserAuthorityException()
             }
         }

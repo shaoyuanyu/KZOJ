@@ -1,16 +1,16 @@
 package cn.kzoj.judge
 
-import cn.kzoj.dto.judge.JudgeStatus
-import cn.kzoj.persistence.ProblemCaseService
-import cn.kzoj.dto.judge.JudgeRequest
-import cn.kzoj.dto.judge.SubmitRequest
-import cn.kzoj.dto.judge.JudgeResult
-import cn.kzoj.dto.problemcase.ProblemCase
-import cn.kzoj.dto.judge.SubmitReceipt
 import cn.kzoj.dto.exception.judge.JudgeIdNotFoundException
+import cn.kzoj.dto.judge.JudgeRequest
+import cn.kzoj.dto.judge.JudgeResult
+import cn.kzoj.dto.judge.JudgeStatus
+import cn.kzoj.dto.judge.SubmitReceipt
+import cn.kzoj.dto.judge.SubmitRequest
+import cn.kzoj.dto.problemcase.ProblemCase
+import cn.kzoj.persistence.ProblemCaseService
 import io.ktor.util.logging.KtorSimpleLogger
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -93,11 +93,13 @@ class JudgeDispatcher(
 
         judgeResult.evaluationPoint = arrayListOf()
         val problemCasePath = judgeRequest.submitRequest.problemId.toString()
-        val problemCaseList: List<ProblemCase> = problemCaseService.getProblemCaseList(judgeRequest.submitRequest.problemId)
+        val problemCaseList: List<ProblemCase> =
+            problemCaseService.getProblemCaseList(judgeRequest.submitRequest.problemId)
 
         problemCaseList.forEach {
             try {
-                val caseContentPair = problemCaseService.getProblemCaseContent(problemCasePath, it.caseInFile, it.caseOutFile)
+                val caseContentPair =
+                    problemCaseService.getProblemCaseContent(problemCasePath, it.caseInFile, it.caseOutFile)
 
                 // run
                 val testRes = sandboxRun.runTestCase(caseContentPair.first)
@@ -133,13 +135,13 @@ class JudgeDispatcher(
         val judgeQueueSize = judgeQueue.size
         return SubmitReceipt(
             judgeId = judgeId,
-            status = if (judgeQueueSize>1) JudgeStatus.Queueing else JudgeStatus.Judging,
+            status = if (judgeQueueSize > 1) JudgeStatus.Queueing else JudgeStatus.Judging,
             positionInQueue = judgeQueueSize
         )
     }
 
     fun queryJudgeStatus(judgeId: String): SubmitReceipt =
-        with (judgeQueue.find { it.judgeId == judgeId }) {
+        with(judgeQueue.find { it.judgeId == judgeId }) {
             if (this == null) {
                 if (judgeResultList.find { it.judgeId == judgeId } == null) {
                     throw JudgeIdNotFoundException()
@@ -147,7 +149,11 @@ class JudgeDispatcher(
                     SubmitReceipt(judgeId = judgeId, status = JudgeStatus.Finished, positionInQueue = 0)
                 }
             } else {
-                SubmitReceipt(judgeId = judgeId, status = JudgeStatus.Queueing, positionInQueue = judgeQueue.indexOf(this))
+                SubmitReceipt(
+                    judgeId = judgeId,
+                    status = JudgeStatus.Queueing,
+                    positionInQueue = judgeQueue.indexOf(this)
+                )
             }
         }
 

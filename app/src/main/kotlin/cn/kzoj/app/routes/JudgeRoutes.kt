@@ -1,7 +1,7 @@
 package cn.kzoj.app.routes
 
-import cn.kzoj.judge.JudgeDispatcher
 import cn.kzoj.dto.judge.SubmitRequest
+import cn.kzoj.judge.JudgeDispatcher
 import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive

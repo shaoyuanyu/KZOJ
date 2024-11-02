@@ -1,12 +1,12 @@
 package cn.kzoj.app.plugins
 
-import cn.kzoj.judge.JudgeDispatcher
-import cn.kzoj.persistence.ProblemService
-import cn.kzoj.persistence.UserService
 import cn.kzoj.app.routes.judgeRoutes
 import cn.kzoj.app.routes.problemRoutes
 import cn.kzoj.app.routes.submissionRoutes
 import cn.kzoj.app.routes.userRoutes
+import cn.kzoj.judge.JudgeDispatcher
+import cn.kzoj.persistence.ProblemService
+import cn.kzoj.persistence.UserService
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*

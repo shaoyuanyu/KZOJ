@@ -3,7 +3,7 @@ package cn.kzoj.dbConvertor.hojData.problemcase
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 
-object ProblemCaseTable: IntIdTable("problem_case") {
+object ProblemCaseTable : IntIdTable("problem_case") {
 
     val pid: Column<Int> = integer("pid")
 

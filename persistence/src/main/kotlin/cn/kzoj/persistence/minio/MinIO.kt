@@ -3,6 +3,9 @@ package cn.kzoj.persistence.minio
 import io.minio.BucketExistsArgs
 import io.minio.MakeBucketArgs
 import io.minio.MinioClient
+import org.slf4j.LoggerFactory
+
+internal val LOGGER = LoggerFactory.getLogger("cn.kzoj.persistence")
 
 fun configureMinIO(
     url: String,
@@ -18,8 +21,7 @@ fun configureMinIO(
     // 检查bucket
     MinioBucketConfig.BucketNameList.forEach { bucketName ->
         if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-            // TODO: LOG
-            // log.info("MinIO $bucketName bucket doesn't exist and will be created.")
+            LOGGER.info("MinIO $bucketName bucket doesn't exist and will be created.")
 
             minioClient.makeBucket(
                 MakeBucketArgs.builder()

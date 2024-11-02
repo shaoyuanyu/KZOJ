@@ -29,7 +29,7 @@ fun configureDatabase(
     )
 
     // 创建database实例
-    val database = Database.connect(datasource=dataSource)
+    val database = Database.connect(datasource = dataSource)
 
     // 第一次transaction与数据库建立连接
     // 检查table并创建缺失的，DSL "CREATE TABLE IF NOT EXISTS"

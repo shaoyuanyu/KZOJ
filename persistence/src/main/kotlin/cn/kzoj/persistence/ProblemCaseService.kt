@@ -15,7 +15,7 @@ class ProblemCaseService(
     private val minioClient: MinioClient,
 ) {
     suspend fun getProblemCaseList(problemId: Int): List<ProblemCase> =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemCaseEntity.find { ProblemCaseTable.problemId eq problemId }.toList().let {
                 val problemCaseArrayList: ArrayList<ProblemCase> = arrayListOf()
                 it.forEach { problemCaseArrayList.add(it.expose()) }
@@ -23,7 +23,7 @@ class ProblemCaseService(
             }
         }
 
-    fun getProblemCaseContent(path: String, caseInFilename: String, caseOutFilename:String): Pair<String, String> =
+    fun getProblemCaseContent(path: String, caseInFilename: String, caseOutFilename: String): Pair<String, String> =
         getProblemCaseObject(minioClient, "$path/$caseInFilename").run {
             val caseIn = readAllBytes().toString(Charsets.UTF_8)
             close()

@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object ProblemTable: IntIdTable("problem") {
+object ProblemTable : IntIdTable("problem") {
 
     val problemId: Column<String?> = text("problem_id").nullable()
 

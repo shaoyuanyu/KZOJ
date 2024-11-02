@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object UserTable: UUIDTable("user") {
+object UserTable : UUIDTable("user") {
 
     /**
      * username 唯一

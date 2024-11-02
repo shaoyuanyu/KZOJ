@@ -67,7 +67,12 @@ fun main() {
 
 
 // problem & problem case
-fun convertProblem(fromDatabase: Database, toDatabase: Database, minioClient: MinioClient, hojProblemCaseFilePath: String) {
+fun convertProblem(
+    fromDatabase: Database,
+    toDatabase: Database,
+    minioClient: MinioClient,
+    hojProblemCaseFilePath: String
+) {
     transaction(fromDatabase) {
         ProblemEntity.all().forEach { hojProblem ->
             if (hojProblem.title == null) {
@@ -143,6 +148,7 @@ fun convertUser(fromDatabase: Database, toDatabase: Database) {
     transaction(fromDatabase) {
         UserInfoEntity.all().forEach { hojUserInfo ->
             transaction(toDatabase) {
+                // TODO: 迁移后提醒学生检查个人信息
                 UserEntity.new {
                     username = hojUserInfo.username
 
@@ -151,8 +157,6 @@ fun convertUser(fromDatabase: Database, toDatabase: Database) {
                     encryptedPassword = "/MD5/${hojUserInfo.password}"
 
                     school = hojUserInfo.school.toString()
-
-                    // TODO: 迁移后提醒学生填写grade
                     grade = 0
 
                     realName = hojUserInfo.realname.toString()

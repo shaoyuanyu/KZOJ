@@ -16,7 +16,7 @@ class ProblemService(
     private val database: Database,
 ) {
     suspend fun createProblem(newProblem: Problem): Int =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemEntity.new {
                 title = newProblem.title
                 author = newProblem.author
@@ -52,7 +52,7 @@ class ProblemService(
 
     @Suppress("DuplicatedCode")
     suspend fun updateProblem(newProblem: Problem) {
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemEntity.findByIdAndUpdate(newProblem.id!!) {
                 it.title = newProblem.title
                 it.author = newProblem.author
@@ -78,7 +78,7 @@ class ProblemService(
     }
 
     suspend fun queryProblemById(id: Int): Problem =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemEntity.findById(id).let {
                 if (it == null) {
                     throw ProblemIdNotFoundException()
@@ -89,7 +89,7 @@ class ProblemService(
         }
 
     suspend fun queryProblemByTitle(title: String): List<Problem> =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemEntity.find { ProblemTable.title like "%$title%" }.also {
                 if (it.empty()) {
                     throw ProblemTitleNotFoundException()
@@ -98,13 +98,13 @@ class ProblemService(
         }
 
     suspend fun queryProblemTotality(): Long =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemEntity.all().count()
         }
 
     // TODO: 增加orderedBy参数及对应功能
     suspend fun queryProblemByPage(pageIndex: Int, pageSize: Int = 20, isAscending: Boolean = true): List<Problem> =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             ProblemEntity.all().run {
                 if (isAscending) {
                     sortedBy { it.id }
@@ -113,14 +113,14 @@ class ProblemService(
                 }
             }.let {
                 it.subList(
-                    fromIndex = with ((pageIndex-1) * pageSize) {
+                    fromIndex = with((pageIndex - 1) * pageSize) {
                         if (this > it.size - 1) {
                             throw ProblemPageIndexOutOfRangeException()
                         } else {
                             this
                         }
                     },
-                    toIndex = with (pageIndex * pageSize) {
+                    toIndex = with(pageIndex * pageSize) {
                         if (this > it.size) {
                             it.size
                         } else {

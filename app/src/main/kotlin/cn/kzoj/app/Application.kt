@@ -1,12 +1,12 @@
 package cn.kzoj.app
 
+import cn.kzoj.app.plugins.*
 import cn.kzoj.judge.JudgeDispatcher
-import cn.kzoj.persistence.ProblemService
 import cn.kzoj.persistence.ProblemCaseService
+import cn.kzoj.persistence.ProblemService
 import cn.kzoj.persistence.UserService
 import cn.kzoj.persistence.database.configureDatabase
 import cn.kzoj.persistence.minio.configureMinIO
-import cn.kzoj.app.plugins.*
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {

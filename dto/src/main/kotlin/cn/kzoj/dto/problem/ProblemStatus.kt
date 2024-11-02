@@ -5,7 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ProblemStatus {
-    @SerialName("PUBLIC")   PUBLIC,
-    @SerialName("PRIVATE")  PRIVATE,
-    @SerialName("IN_RACE")  IN_RACE,
+    @SerialName("PUBLIC")
+    PUBLIC,
+    @SerialName("PRIVATE")
+    PRIVATE,
+    @SerialName("IN_RACE")
+    IN_RACE,
 }

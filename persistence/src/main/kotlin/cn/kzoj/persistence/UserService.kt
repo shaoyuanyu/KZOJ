@@ -20,11 +20,11 @@ import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.util.UUID
 
-// TODO: LOG
-// internal val LOGGER = KtorSimpleLogger("cn.kzoj.data.UserService")
+internal val LOGGER = LoggerFactory.getLogger("cn.kzoj.persistence")
 
 class UserService(
     private val database: Database,
@@ -74,8 +74,7 @@ class UserService(
                     utcUpdated = this.utcCreated
                 }.id.value.toString()
             }.also { uuid ->
-                // TODO: LOG
-                // LOGGER.info("New user is created, uuid: $uuid")
+                LOGGER.info("New user is created, uuid: $uuid")
             }
         } catch (_: ExposedSQLException) {
             throw UsernameDuplicatedException()
@@ -85,7 +84,7 @@ class UserService(
      * 根据userId（uuid）查询用户
      */
     suspend fun queryUserByUUID(uuid: String): User =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             UserEntity.findById(UUID.fromString(uuid)).let {
                 if (it == null) {
                     throw UserIdNotFoundException()
@@ -101,7 +100,7 @@ class UserService(
     @Suppress("DuplicatedCode")
     suspend fun updateUser(newUser: User) {
         try {
-            newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+            newSuspendedTransaction(context = Dispatchers.Default, db = database) {
                 UserEntity.findByIdAndUpdate(UUID.fromString(newUser.uuid)) {
                     it.username = newUser.username
                     it.encryptedPassword = encryptPasswd(newUser.plainPassword!!)
@@ -124,7 +123,7 @@ class UserService(
      * 删除用户
      */
     suspend fun deleteUser(userId: String) {
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             UserEntity.findById(UUID.fromString(userId)).let {
                 if (it == null) {
                     throw UserIdNotFoundException()
@@ -139,7 +138,7 @@ class UserService(
      * 登录验证
      */
     suspend fun validate(username: String, password: String): String? =
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             UserEntity.find {
                 UserTable.username eq username
             }.let {
@@ -171,7 +170,7 @@ class UserService(
 
         avatarFileInputStream.close()
 
-        newSuspendedTransaction(context=Dispatchers.Default, db=database) {
+        newSuspendedTransaction(context = Dispatchers.Default, db = database) {
             UserEntity.findByIdAndUpdate(UUID.fromString(userId)) {
                 it.avatarHashIndex = avatarHashIndex
             }

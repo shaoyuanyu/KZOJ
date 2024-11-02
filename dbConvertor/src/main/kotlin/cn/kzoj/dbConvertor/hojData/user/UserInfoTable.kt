@@ -4,7 +4,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 
-object UserInfoTable: IdTable<String>("user_info") {
+object UserInfoTable : IdTable<String>("user_info") {
 
     override val id: Column<EntityID<String>> = text("uuid").entityId()
 

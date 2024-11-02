@@ -7,20 +7,20 @@ import org.jetbrains.exposed.dao.id.EntityID
 import java.util.UUID
 
 class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
-    companion object: UUIDEntityClass<UserEntity>(UserTable)
+    companion object : UUIDEntityClass<UserEntity>(UserTable)
 
-    var username                by UserTable.username
-    var encryptedPassword       by UserTable.encryptedPassword
-    var school                  by UserTable.school
-    var grade                   by UserTable.grade
-    var realName                by UserTable.realName
-    var gender                  by UserTable.gender
-    var githubHomepage          by UserTable.githubHomepage
-    var email                   by UserTable.email
-    var avatarHashIndex         by UserTable.avatarHashIndex
-    var authority               by UserTable.authority
-    var utcCreated              by UserTable.utcCreated
-    var utcUpdated              by UserTable.utcUpdated
+    var username by UserTable.username
+    var encryptedPassword by UserTable.encryptedPassword
+    var school by UserTable.school
+    var grade by UserTable.grade
+    var realName by UserTable.realName
+    var gender by UserTable.gender
+    var githubHomepage by UserTable.githubHomepage
+    var email by UserTable.email
+    var avatarHashIndex by UserTable.avatarHashIndex
+    var authority by UserTable.authority
+    var utcCreated by UserTable.utcCreated
+    var utcUpdated by UserTable.utcUpdated
 }
 
 fun UserEntity.expose(): User =

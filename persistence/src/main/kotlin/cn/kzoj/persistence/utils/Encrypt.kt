@@ -21,7 +21,10 @@ fun encryptPasswd(plainPassword: String) = BCrypt.hashpw(plainPassword, BCrypt.g
 fun validatePasswd(plainPassword: String, encryptedPassword: String): Boolean =
     if (encryptedPassword.startsWith("/MD5/")) {
         // 使用 MD5 校验
-        BigInteger(1, MessageDigest.getInstance("md5").digest(plainPassword.toByteArray())).toString(16) == encryptedPassword.removeRange(0, 5)
+        BigInteger(
+            1,
+            MessageDigest.getInstance("md5").digest(plainPassword.toByteArray())
+        ).toString(16) == encryptedPassword.removeRange(0, 5)
     } else {
         // 使用 BCrypt 校验
         BCrypt.checkpw(plainPassword, encryptedPassword)
