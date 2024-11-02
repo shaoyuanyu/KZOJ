@@ -70,34 +70,34 @@ sealed class File {
     @Serializable
     data class LocalFile(
         val src: String, // 文件绝对路径
-    ): File()
+    ) : File()
 
     @Serializable
     data class MemoryFile(
         val content: String, // 文件内容
-    ): File()
+    ) : File()
 
     @Serializable
     data class PreParedFile(
         val fileId: String, // 文件id
-    ): File()
+    ) : File()
 
     @Serializable
     data class Collector(
         val name: String, // copyOut文件名
         val max: Int, // 最大大小限制
         val pipe: Boolean? = false, // 通过管道收集（默认为false，文件收集）
-    ): File()
+    ) : File()
 
     @Serializable
     data class StreamIn(
         val streamIn: Boolean, // 流式输入
-    ): File()
+    ) : File()
 
     @Serializable
     data class StreamOut(
         val streamOut: Boolean, // 流式输出
-    ): File()
+    ) : File()
 }
 
 @Suppress("unused")
@@ -106,44 +106,20 @@ sealed class CopyIn {
     @Serializable
     data class LocalFile(
         val src: String, // 文件绝对路径
-    ): CopyIn()
+    ) : CopyIn()
 
     @Serializable
     data class MemoryFile(
         val content: String, // 文件内容
-    ): CopyIn()
+    ) : CopyIn()
 
     @Serializable
     data class PreParedFile(
         val fileId: String, // 文件id
-    ): CopyIn()
+    ) : CopyIn()
 
     @Serializable
     data class Symlink(
         val symlink: String, // 符号连接目标
-    ): CopyIn()
+    ) : CopyIn()
 }
-
-// 测试用
-@Suppress("unused")
-val GoJudgeRequestExample = GoJudgeRequest(
-    cmd = listOf(
-        GoJudgeCommand(
-            args = listOf("/usr/bin/g++", "a.cc", "-o", "a"),
-            env = listOf("PATH=/usr/bin:/bin"),
-            files = listOf(
-                File.MemoryFile(content = ""),
-                File.Collector(name = "stdout", max = 10240),
-                File.Collector(name = "stderr", max = 10240),
-            ),
-            cpuLimit = 10000000000,
-            memoryLimit = 104857600,
-            procLimit = 50,
-            copyIn = mapOf(
-                "a.cc" to CopyIn.MemoryFile(content = "include <iostream>\nusing namespace std;\nint main() {\nint a, b;\ncin >> a >> b;\ncout << a + b << endl;\n}"),
-            ),
-            copyOut = listOf("stdout", "stderr"),
-            copyOutCached = listOf("a"),
-        )
-    )
-)

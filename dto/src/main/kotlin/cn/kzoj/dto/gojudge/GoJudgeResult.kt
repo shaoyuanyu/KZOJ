@@ -54,14 +54,29 @@ data class GoJudgeResult(
 @Suppress("unused")
 @Serializable
 enum class Status {
-    @SerialName("Accepted")                 Accepted,               // 正常情况
-    @SerialName("Memory Limit Exceeded")    MemoryLimitExceeded,    // 内存超限
-    @SerialName("Time Limit Exceeded")      TimeLimitExceeded,      // 时间超限
-    @SerialName("Output Limit Exceeded")    OutputLimitExceeded,    // 输出超限
-    @SerialName("File Error")               FileError,              // 文件错误
-    @SerialName("Nonzero Exit Status")      NonzeroExitStatus,      // 非 0 退出值
-    @SerialName("Signalled")                Signalled,              // 进程被信号终止
-    @SerialName("Internal Error")           InternalError,          // 内部错误
+    @SerialName("Accepted")
+    Accepted,               // 正常情况
+
+    @SerialName("Memory Limit Exceeded")
+    MemoryLimitExceeded,    // 内存超限
+
+    @SerialName("Time Limit Exceeded")
+    TimeLimitExceeded,      // 时间超限
+
+    @SerialName("Output Limit Exceeded")
+    OutputLimitExceeded,    // 输出超限
+
+    @SerialName("File Error")
+    FileError,              // 文件错误
+
+    @SerialName("Nonzero Exit Status")
+    NonzeroExitStatus,      // 非 0 退出值
+
+    @SerialName("Signalled")
+    Signalled,              // 进程被信号终止
+
+    @SerialName("Internal Error")
+    InternalError,          // 内部错误
 }
 
 @Serializable
@@ -85,13 +100,30 @@ data class FileError(
 @Suppress("unused")
 @Serializable
 enum class FileErrorType {
-    @SerialName("CopyInOpenFile")           CopyInOpenFile,
-    @SerialName("CopyInCreateFile")         CopyInCreateFile,
-    @SerialName("CopyInCopyContent")        CopyInCopyContent,
-    @SerialName("CopyOutOpen")              CopyOutOpen,
-    @SerialName("CopyOutNotRegularFile")    CopyOutNotRegularFile,
-    @SerialName("CopyOutSizeExceeded")      CopyOutSizeExceeded,
-    @SerialName("CopyOutCreateFile")        CopyOutCreateFile,
-    @SerialName("CopyOutCopyContent")       CopyOutCopyContent,
-    @SerialName("CollectSizeExceeded")      CollectSizeExceeded,
+    @SerialName("CopyInOpenFile")
+    CopyInOpenFile,
+
+    @SerialName("CopyInCreateFile")
+    CopyInCreateFile,
+
+    @SerialName("CopyInCopyContent")
+    CopyInCopyContent,
+
+    @SerialName("CopyOutOpen")
+    CopyOutOpen,
+
+    @SerialName("CopyOutNotRegularFile")
+    CopyOutNotRegularFile,
+
+    @SerialName("CopyOutSizeExceeded")
+    CopyOutSizeExceeded,
+
+    @SerialName("CopyOutCreateFile")
+    CopyOutCreateFile,
+
+    @SerialName("CopyOutCopyContent")
+    CopyOutCopyContent,
+
+    @SerialName("CollectSizeExceeded")
+    CollectSizeExceeded,
 }

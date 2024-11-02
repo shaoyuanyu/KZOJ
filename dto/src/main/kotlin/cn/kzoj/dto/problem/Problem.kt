@@ -1,6 +1,5 @@
 package cn.kzoj.dto.problem
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -24,26 +23,4 @@ data class Problem(
     val score: Int,
     val utcCreated: Instant? = null,
     val utcLastModified: Instant? = null,
-)
-
-@Suppress("unused")
-val problemExample = Problem(
-    id = 1,
-    title = "title",
-    author = "yusy",
-    createdByUser = "yusy",
-    description = "description",
-    timeLimit = 1000,
-    memoryLimit = 128,
-    stackLimit = 128,
-    inputDescription = "input description",
-    outputDescription = "output description",
-    examples = "<input></input><output></output>",
-    problemSource = "nowhere",
-    difficulty = 0,
-    tip = "tip",
-    status = "public",
-    score = 100,
-    utcCreated = Clock.System.now(),
-    utcLastModified = Clock.System.now(),
 )

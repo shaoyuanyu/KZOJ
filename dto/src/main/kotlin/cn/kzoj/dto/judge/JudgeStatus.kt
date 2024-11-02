@@ -6,8 +6,15 @@ import kotlinx.serialization.Serializable
 @Suppress("unused")
 @Serializable
 enum class JudgeStatus {
-    @SerialName("Queueing")     Queueing,
-    @SerialName("Judging")      Judging,
-    @SerialName("Finished")     Finished,
-    @SerialName("NotFound")     NotFound,
+    @SerialName("Queueing")
+    Queueing,
+
+    @SerialName("Judging")
+    Judging,
+
+    @SerialName("Finished")
+    Finished,
+
+    @SerialName("NotFound")
+    NotFound,
 }

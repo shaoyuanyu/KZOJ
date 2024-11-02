@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class UserAuthority {
-    @SerialName("ADMIN")    ADMIN,
-    @SerialName("USER")     USER,
+    @SerialName("ADMIN")
+    ADMIN,
+
+    @SerialName("USER")
+    USER,
 }
