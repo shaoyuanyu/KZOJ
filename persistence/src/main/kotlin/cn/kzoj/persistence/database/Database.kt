@@ -22,7 +22,7 @@ fun configureDatabase(
             driverClassName = driver
             username = user
             this.password = password
-            maximumPoolSize = 6
+            maximumPoolSize = 24
             isReadOnly = false
             transactionIsolation = "TRANSACTION_SERIALIZABLE"
         }

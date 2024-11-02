@@ -23,8 +23,8 @@ fun configureHojDatabase(
             driverClassName = driver
             username = user
             this.password = password
-            maximumPoolSize = 6
-            isReadOnly = false
+            maximumPoolSize = 24
+            isReadOnly = true
             transactionIsolation = "TRANSACTION_SERIALIZABLE"
         }
     )
