@@ -1,13 +1,12 @@
 package cn.kzoj.dbConvertor.hojData.user
 
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import java.util.UUID
 
 @Suppress("unused")
-class UserInfoDAO(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
-    companion object: UUIDEntityClass<UserInfoDAO>(UserInfoTable)
+class UserInfoDAO(uuid: EntityID<String>) : Entity<String>(uuid) {
+    companion object: EntityClass<String, UserInfoDAO>(UserInfoTable)
 
     var username            by UserInfoTable.username
     var password            by UserInfoTable.password

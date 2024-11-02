@@ -1,9 +1,12 @@
 package cn.kzoj.dbConvertor.hojData.user
 
-import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 
-object UserInfoTable: UUIDTable("user_info") {
+object UserInfoTable: IdTable<String>("user_info") {
+
+    override val id: Column<EntityID<String>> = text("uuid").entityId()
 
     val username: Column<String> = text("username")
 
