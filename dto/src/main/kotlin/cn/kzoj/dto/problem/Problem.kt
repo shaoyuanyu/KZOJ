@@ -19,7 +19,7 @@ data class Problem(
     val problemSource: String,
     val difficulty: Int,
     val tip: String,
-    val status: String,
+    val status: ProblemStatus = ProblemStatus.PUBLIC,
     val score: Int,
     val utcCreated: Instant? = null,
     val utcLastModified: Instant? = null,

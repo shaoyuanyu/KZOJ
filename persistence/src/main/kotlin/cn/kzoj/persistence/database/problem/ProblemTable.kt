@@ -1,5 +1,6 @@
 package cn.kzoj.persistence.database.problem
 
+import cn.kzoj.dto.problem.ProblemStatus
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
@@ -7,11 +8,11 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object ProblemTable: IntIdTable("problem") {
 
-    val title: Column<String> = varchar("title", 100).index()
+    val title: Column<String> = varchar("title", 256).index()
 
-    val author: Column<String> = varchar("author", 100)
+    val author: Column<String> = text("author")
 
-    val createdByUser: Column<String> = varchar("created_by_user", 100)
+    val createdByUser: Column<String> = varchar("created_by_user", 128)
 
     val description: Column<String> = text("description")
 
@@ -32,7 +33,7 @@ object ProblemTable: IntIdTable("problem") {
      */
     val examples: Column<String> = text("examples")
 
-    val problemSource: Column<String> = varchar("problem_source", 100)
+    val problemSource: Column<String> = text("problem_source")
 
     val difficulty: Column<Int> = integer("difficulty")
 
@@ -42,7 +43,12 @@ object ProblemTable: IntIdTable("problem") {
      * 题目状态
      * 公开（默认）/私有/比赛中
      */
-    val status: Column<String> = varchar("status", 50)
+    val status: Column<ProblemStatus> = customEnumeration(
+        name = "status",
+        sql = "ENUM('PUBLIC', 'PRIVATE', 'IN_RACE')",
+        fromDb = { value -> ProblemStatus.valueOf(value as String) },
+        toDb = { it.name }
+    )
 
     val score: Column<Int> = integer("score")
 

@@ -12,7 +12,6 @@ object UserTable: UUIDTable("user") {
      * username 唯一
      */
     val username: Column<String> = varchar("username", 100).uniqueIndex()
-    // val username: Column<String> = varchar("username", 100).index()
 
     val encryptedPassword: Column<String> = text("encrypted_password")
 
@@ -30,14 +29,7 @@ object UserTable: UUIDTable("user") {
 
     val avatarHashIndex: Column<String> = varchar("avatar_hash_index", 64)
 
-//    val status = customEnumeration(
-//        name = "status",
-//        sql = "ENUM('ONLINE', 'OFFLINE')",
-//        fromDb = { value -> Status.valueOf(value as String) },
-//        toDb = { it.name }
-//    )
-
-    val authority = customEnumeration(
+    val authority: Column<UserAuthority> = customEnumeration(
         name = "authority",
         sql = "ENUM('ADMIN', 'USER')",
         fromDb = { value -> UserAuthority.valueOf(value as String) },
