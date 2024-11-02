@@ -14,6 +14,7 @@ dependencies {
 
     implementation(libs.bundles.exposed)
     implementation(libs.hikaricp)
+    implementation(libs.jbcrypt)
     implementation(libs.kotlinx.datetime)
     implementation(libs.logback.classic)
     implementation(libs.mysql.connector)

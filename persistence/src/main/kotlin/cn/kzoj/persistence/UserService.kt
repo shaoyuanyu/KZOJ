@@ -4,18 +4,22 @@ import cn.kzoj.dto.exception.user.UserIdNotFoundException
 import cn.kzoj.dto.exception.user.UsernameDuplicatedException
 import cn.kzoj.dto.exception.user.UsernameNotFoundException
 import cn.kzoj.dto.user.User
+import cn.kzoj.dto.user.UserAuthority
 import cn.kzoj.persistence.database.user.UserEntity
 import cn.kzoj.persistence.database.user.UserTable
 import cn.kzoj.persistence.database.user.expose
 import cn.kzoj.persistence.database.user.exposeWithoutPasswd
 import cn.kzoj.persistence.minio.avatar.getAvatarObject
 import cn.kzoj.persistence.minio.avatar.putAvatarObject
+import cn.kzoj.persistence.utils.encryptPasswd
+import cn.kzoj.persistence.utils.validatePasswd
 import io.minio.MinioClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.InputStream
 import java.util.UUID
 
@@ -26,6 +30,29 @@ class UserService(
     private val database: Database,
     private val minioClient: MinioClient
 ) {
+    init {
+        // 若 User 表为空（新创建），则自动创建默认 admin 账户
+        // TODO: 提醒管理员修改初始密码
+        transaction(database) {
+            if (UserEntity.all().empty()) {
+                UserEntity.new {
+                    username = "admin"
+                    encryptedPassword = encryptPasswd("12345")
+                    school = ""
+                    grade = 100
+                    realName = ""
+                    gender = ""
+                    githubHomepage = ""
+                    email = ""
+                    avatarHashIndex = "default" // TODO:设置默认头像
+                    authority = UserAuthority.ADMIN
+                    utcCreated = Clock.System.now()
+                    utcUpdated = this.utcCreated
+                }
+            }
+        }
+    }
+
     /**
      * 创建用户
      */
@@ -34,7 +61,7 @@ class UserService(
             newSuspendedTransaction(context = Dispatchers.Default, db = database) {
                 UserEntity.new {
                     username = newUser.username
-                    encryptedPassword = newUser.plainPassword!! // TODO:加密
+                    encryptedPassword = encryptPasswd(newUser.plainPassword!!)
                     school = newUser.school
                     grade = newUser.grade
                     realName = newUser.realName
@@ -77,7 +104,7 @@ class UserService(
             newSuspendedTransaction(context=Dispatchers.Default, db=database) {
                 UserEntity.findByIdAndUpdate(UUID.fromString(newUser.uuid)) {
                     it.username = newUser.username
-                    it.encryptedPassword = newUser.plainPassword!! // TODO:加密
+                    it.encryptedPassword = encryptPasswd(newUser.plainPassword!!)
                     it.school = newUser.school
                     it.grade = newUser.grade
                     it.realName = newUser.realName
@@ -120,9 +147,10 @@ class UserService(
                     throw UsernameNotFoundException()
                 }
 
-                // TODO: 解密
                 val user = it.toList()[0].expose()
-                if (user.encryptedPassword == password) {
+
+                // 验证密码
+                if (validatePasswd(password, user.encryptedPassword!!)) {
                     user.uuid.toString()
                 } else {
                     null

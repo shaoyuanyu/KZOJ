@@ -1,7 +1,7 @@
 package cn.kzoj.app.plugins
 
+import cn.kzoj.dto.exception.user.PasswordWrongException
 import cn.kzoj.persistence.UserService
-import cn.kzoj.dto.exception.user.UserAccountValidateException
 import cn.kzoj.dto.exception.user.UserAuthorityException
 import cn.kzoj.dto.user.UserAuthority
 import cn.kzoj.dto.user.UserSession
@@ -41,13 +41,8 @@ fun Application.configureSecurity(userService: UserService) {
                 if (uuid != null) {
                     UserIdPrincipal(uuid)
                 } else {
-                    null
+                    throw PasswordWrongException()
                 }
-            }
-
-            // 验证失败反馈
-            challenge {
-                throw UserAccountValidateException()
             }
         }
 

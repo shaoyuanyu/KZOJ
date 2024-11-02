@@ -97,7 +97,11 @@ fun convertUser(fromDatabase: Database, toDatabase: Database) {
             transaction(toDatabase) {
                 UserEntity.new {
                     username = hojUserInfo.username
-                    encryptedPassword = hojUserInfo.password
+
+                    // hoj 采用 md5 对密码进行单向哈希
+                    // 添加 "/MD5/" 标记，以便新数据库兼容 HOJ 密码
+                    encryptedPassword = "/MD5/${hojUserInfo.password}"
+
                     school = hojUserInfo.school.toString()
 
                     // TODO: 迁移后提醒学生填写grade

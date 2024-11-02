@@ -13,6 +13,9 @@ object UserTable: UUIDTable("user") {
      */
     val username: Column<String> = varchar("username", 100).uniqueIndex()
 
+    /**
+     * 使用 BCrypt 算法
+     */
     val encryptedPassword: Column<String> = text("encrypted_password")
 
     val school: Column<String> = varchar("school", 100)
