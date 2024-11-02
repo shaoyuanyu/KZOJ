@@ -18,6 +18,7 @@ dependencies {
         implementation(libs.hikaricp)
         implementation(libs.kotlinx.datetime)
         implementation(libs.logback.classic)
+        implementation(libs.minio)
         implementation(libs.mysql.connector)
     }
 }

@@ -2,11 +2,16 @@ package cn.kzoj.dbConvertor
 
 import cn.kzoj.dbConvertor.hojData.configureHojDatabase
 import cn.kzoj.dbConvertor.hojData.problem.ProblemEntity
+import cn.kzoj.dbConvertor.hojData.problemcase.ProblemCaseEntity
+import cn.kzoj.dbConvertor.hojData.problemcase.ProblemCaseTable
 import cn.kzoj.dbConvertor.hojData.user.UserInfoEntity
 import cn.kzoj.dto.problem.ProblemStatus
 import cn.kzoj.dto.user.UserAuthority
 import cn.kzoj.persistence.database.configureDatabase
 import cn.kzoj.persistence.database.user.UserEntity
+import cn.kzoj.persistence.minio.configureMinIO
+import cn.kzoj.persistence.minio.problemcase.uploadProblemCaseObject
+import io.minio.MinioClient
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -15,6 +20,10 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.slf4j.LoggerFactory
+import java.io.File
+
+internal val LOGGER = LoggerFactory.getLogger("cn.kzoj.dbConvertor")
 
 /**
  * 需要设置以下环境变量
@@ -22,6 +31,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
  * HOJ_URL / HOJ_USER / HOJ_PASSWORD
  *
  * KZOJ_URL / KZOJ_USER / KZOJ_PASSWORD
+ *
+ * MINIO_URL / MINIO_USER / MINIO_PASSWORD
+ *
+ * HOJ_PROBLEM_CASE_PATH
  */
 fun main() {
     // hoj 数据库
@@ -40,22 +53,30 @@ fun main() {
         password = System.getenv("KZOJ_PASSWORD")
     )
 
-    convertProblem(fromDatabase, toDatabase)
+    val minioClient = configureMinIO(
+        url = System.getenv("MINIO_URL"),
+        user = System.getenv("MINIO_USER"),
+        password = System.getenv("MINIO_PASSWORD")
+    )
+
+    val hojProblemCaseFilePath = System.getenv("HOJ_PROBLEM_CASE_PATH")
+
+    convertProblem(fromDatabase, toDatabase, minioClient, hojProblemCaseFilePath)
     convertUser(fromDatabase, toDatabase)
 }
 
 
 // problem & problem case
-fun convertProblem(fromDatabase: Database, toDatabase: Database) {
+fun convertProblem(fromDatabase: Database, toDatabase: Database, minioClient: MinioClient, hojProblemCaseFilePath: String) {
     transaction(fromDatabase) {
         ProblemEntity.all().forEach { hojProblem ->
-
             if (hojProblem.title == null) {
                 return@forEach
             }
 
-            // TODO: 格式化，删除字符串中多余空格等
-            transaction(toDatabase) {
+            // Problem 表项迁移
+            val problemId = transaction(toDatabase) {
+                // TODO: 格式化，删除字符串中多余空格等
                 cn.kzoj.persistence.database.problem.ProblemEntity.new {
                     title = hojProblem.title.toString()
                     author = hojProblem.author.toString()
@@ -80,7 +101,34 @@ fun convertProblem(fromDatabase: Database, toDatabase: Database) {
                     score = hojProblem.oiScore
                     utcCreated = Clock.System.now()
                     utcUpdated = this.utcCreated
+                }.id.value
+            }
+
+            // Problem Case 表项及文件迁移
+            ProblemCaseEntity.find {
+                ProblemCaseTable.pid eq hojProblem.id.value
+            }.forEach { hojProblemCase ->
+                val caseIn = "${hojProblemCaseFilePath}/problem_${hojProblemCase.pid}/${hojProblemCase.input}"
+                val caseOut = "${hojProblemCaseFilePath}/problem_${hojProblemCase.pid}/${hojProblemCase.output}"
+
+                if (!File(caseIn).exists() || !File(caseOut).exists()) {
+                    LOGGER.info("problem_id: ${hojProblemCase.pid}, testcase: ${hojProblemCase.input}, ${hojProblemCase.output} does not exist.")
+                    return@forEach
                 }
+
+                // Problem Case 表项迁移到 KZOJ 数据库
+                transaction(toDatabase) {
+                    cn.kzoj.persistence.database.problemcase.ProblemCaseEntity.new {
+                        this.problemId = problemId // 新生成的id
+                        caseInFile = hojProblemCase.input
+                        caseOutFile = hojProblemCase.output
+                        score = hojProblemCase.score
+                    }
+                }
+
+                // Problem Case 文件迁移到 MinIO
+                uploadProblemCaseObject(minioClient, "${problemId}/${hojProblemCase.input}", caseIn)
+                uploadProblemCaseObject(minioClient, "${problemId}/${hojProblemCase.output}", caseOut)
             }
         }
     }
