@@ -4,9 +4,9 @@ import cn.kzoj.persistence.ProblemService
 import cn.kzoj.dto.exception.problem.ProblemIdNotIntException
 import cn.kzoj.dto.exception.problem.ProblemPageIndexNotPositiveIntException
 import cn.kzoj.dto.exception.user.UserAuthorityException
-import cn.kzoj.dto.entity.problem.Problem
-import cn.kzoj.dto.entity.user.UserAuthority
-import cn.kzoj.dto.entity.user.UserSession
+import cn.kzoj.dto.problem.Problem
+import cn.kzoj.dto.user.UserAuthority
+import cn.kzoj.dto.user.UserSession
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.authenticate

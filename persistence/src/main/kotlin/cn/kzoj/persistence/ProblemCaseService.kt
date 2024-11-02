@@ -1,7 +1,7 @@
 package cn.kzoj.persistence
 
-import cn.kzoj.dto.entity.problemcase.ProblemCase
-import cn.kzoj.persistence.database.problemcase.ProblemCaseDAO
+import cn.kzoj.dto.problemcase.ProblemCase
+import cn.kzoj.persistence.database.problemcase.ProblemCaseEntity
 import cn.kzoj.persistence.database.problemcase.ProblemCaseTable
 import cn.kzoj.persistence.database.problemcase.expose
 import cn.kzoj.persistence.minio.problemcase.getProblemCaseObject
@@ -16,7 +16,7 @@ class ProblemCaseService(
 ) {
     suspend fun getProblemCaseList(problemId: Int): List<ProblemCase> =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemCaseDAO.find { ProblemCaseTable.problemId eq problemId }.toList().let {
+            ProblemCaseEntity.find { ProblemCaseTable.problemId eq problemId }.toList().let {
                 val problemCaseArrayList: ArrayList<ProblemCase> = arrayListOf()
                 it.forEach { problemCaseArrayList.add(it.expose()) }
                 problemCaseArrayList.toList()

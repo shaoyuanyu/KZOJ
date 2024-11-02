@@ -5,8 +5,8 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 @Suppress("Unused")
-class ProblemDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object: IntEntityClass<ProblemDAO>(ProblemTable)
+class ProblemEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object: IntEntityClass<ProblemEntity>(ProblemTable)
 
     var problemId               by ProblemTable.problemId
     var title                   by ProblemTable.title

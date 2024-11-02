@@ -1,4 +1,4 @@
-package cn.kzoj.dto.entity.judge
+package cn.kzoj.dto.judge
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

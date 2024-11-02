@@ -1,12 +1,12 @@
 package cn.kzoj.persistence.database.problem
 
-import cn.kzoj.dto.entity.problem.Problem
+import cn.kzoj.dto.problem.Problem
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class ProblemDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object: IntEntityClass<ProblemDAO>(ProblemTable)
+class ProblemEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object: IntEntityClass<ProblemEntity>(ProblemTable)
 
     var title                   by ProblemTable.title
     var author                  by ProblemTable.author
@@ -27,7 +27,7 @@ class ProblemDAO(id: EntityID<Int>) : IntEntity(id) {
     var utcLastModified         by ProblemTable.utcLastModified
 }
 
-fun ProblemDAO.expose(): Problem =
+fun ProblemEntity.expose(): Problem =
     Problem(
         id = this.id.value,
         title = this.title,
@@ -49,7 +49,7 @@ fun ProblemDAO.expose(): Problem =
         utcLastModified = this.utcLastModified,
     )
 
-fun List<ProblemDAO>.expose(): List<Problem> =
+fun List<ProblemEntity>.expose(): List<Problem> =
     let {
         val problemArrayList: ArrayList<Problem> = arrayListOf()
         it.forEach { problemArrayList.add(it.expose()) }

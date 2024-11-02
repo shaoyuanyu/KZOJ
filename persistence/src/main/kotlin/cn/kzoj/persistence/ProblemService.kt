@@ -3,8 +3,8 @@ package cn.kzoj.persistence
 import cn.kzoj.dto.exception.problem.ProblemIdNotFoundException
 import cn.kzoj.dto.exception.problem.ProblemPageIndexOutOfRangeException
 import cn.kzoj.dto.exception.problem.ProblemTitleNotFoundException
-import cn.kzoj.dto.entity.problem.Problem
-import cn.kzoj.persistence.database.problem.ProblemDAO
+import cn.kzoj.dto.problem.Problem
+import cn.kzoj.persistence.database.problem.ProblemEntity
 import cn.kzoj.persistence.database.problem.ProblemTable
 import cn.kzoj.persistence.database.problem.expose
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ class ProblemService(
 ) {
     suspend fun createProblem(newProblem: Problem): Int =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.new {
+            ProblemEntity.new {
                 title = newProblem.title
                 author = newProblem.author
                 createdByUser = newProblem.createdByUser
@@ -40,7 +40,7 @@ class ProblemService(
 
     suspend fun deleteProblem(id: Int) {
         newSuspendedTransaction(context = Dispatchers.Default, db = database) {
-            ProblemDAO.findById(id).let {
+            ProblemEntity.findById(id).let {
                 if (it == null) {
                     throw ProblemIdNotFoundException()
                 }
@@ -53,7 +53,7 @@ class ProblemService(
     @Suppress("DuplicatedCode")
     suspend fun updateProblem(newProblem: Problem) {
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.findByIdAndUpdate(newProblem.id!!) {
+            ProblemEntity.findByIdAndUpdate(newProblem.id!!) {
                 it.title = newProblem.title
                 it.author = newProblem.author
                 it.description = newProblem.description
@@ -79,7 +79,7 @@ class ProblemService(
 
     suspend fun queryProblemById(id: Int): Problem =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.findById(id).let {
+            ProblemEntity.findById(id).let {
                 if (it == null) {
                     throw ProblemIdNotFoundException()
                 }
@@ -90,7 +90,7 @@ class ProblemService(
 
     suspend fun queryProblemByTitle(title: String): List<Problem> =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.find { ProblemTable.title like "%$title%" }.also {
+            ProblemEntity.find { ProblemTable.title like "%$title%" }.also {
                 if (it.empty()) {
                     throw ProblemTitleNotFoundException()
                 }
@@ -99,13 +99,13 @@ class ProblemService(
 
     suspend fun queryProblemTotality(): Long =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.all().count()
+            ProblemEntity.all().count()
         }
 
     // TODO: 增加orderedBy参数及对应功能
     suspend fun queryProblemByPage(pageIndex: Int, pageSize: Int = 20, isAscending: Boolean = true): List<Problem> =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            ProblemDAO.all().run {
+            ProblemEntity.all().run {
                 if (isAscending) {
                     sortedBy { it.id }
                 } else {

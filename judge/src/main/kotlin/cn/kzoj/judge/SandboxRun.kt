@@ -2,8 +2,13 @@ package cn.kzoj.judge
 
 import cn.kzoj.common.sandbox.LanguageConfig
 import cn.kzoj.common.sandbox.SandboxConfig
-import cn.kzoj.dto.entity.gojudge.*
-import cn.kzoj.dto.entity.judge.JudgeRequest
+import cn.kzoj.dto.gojudge.CopyIn
+import cn.kzoj.dto.gojudge.File
+import cn.kzoj.dto.gojudge.GoJudgeCommand
+import cn.kzoj.dto.gojudge.GoJudgeRequest
+import cn.kzoj.dto.gojudge.GoJudgeResult
+import cn.kzoj.dto.gojudge.Status
+import cn.kzoj.dto.judge.JudgeRequest
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*

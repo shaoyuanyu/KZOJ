@@ -3,8 +3,8 @@ package cn.kzoj.app.plugins
 import cn.kzoj.persistence.UserService
 import cn.kzoj.dto.exception.user.UserAccountValidateException
 import cn.kzoj.dto.exception.user.UserAuthorityException
-import cn.kzoj.dto.entity.user.UserAuthority
-import cn.kzoj.dto.entity.user.UserSession
+import cn.kzoj.dto.user.UserAuthority
+import cn.kzoj.dto.user.UserSession
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication

@@ -1,12 +1,12 @@
 package cn.kzoj.persistence.database.problemcase
 
-import cn.kzoj.dto.entity.problemcase.ProblemCase
+import cn.kzoj.dto.problemcase.ProblemCase
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class ProblemCaseDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object: IntEntityClass<ProblemCaseDAO>(ProblemCaseTable)
+class ProblemCaseEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object: IntEntityClass<ProblemCaseEntity>(ProblemCaseTable)
 
     var problemId       by ProblemCaseTable.problemId
     var caseInFile      by ProblemCaseTable.caseInFile
@@ -14,7 +14,7 @@ class ProblemCaseDAO(id: EntityID<Int>) : IntEntity(id) {
     var score           by ProblemCaseTable.score
 }
 
-fun ProblemCaseDAO.expose(): ProblemCase =
+fun ProblemCaseEntity.expose(): ProblemCase =
     ProblemCase(
         problemId = this.problemId,
         caseInFile = this.caseInFile,

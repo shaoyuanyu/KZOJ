@@ -2,9 +2,9 @@ package cn.kzoj.app.routes
 
 import cn.kzoj.persistence.UserService
 import cn.kzoj.dto.exception.user.UserAuthorityException
-import cn.kzoj.dto.entity.user.User
-import cn.kzoj.dto.entity.user.UserAuthority
-import cn.kzoj.dto.entity.user.UserSession
+import cn.kzoj.dto.user.User
+import cn.kzoj.dto.user.UserAuthority
+import cn.kzoj.dto.user.UserSession
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.UserIdPrincipal

@@ -1,4 +1,4 @@
-package cn.kzoj.dto.entity.user
+package cn.kzoj.dto.user
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable

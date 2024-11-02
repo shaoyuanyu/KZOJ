@@ -1,4 +1,4 @@
-package cn.kzoj.dto.entity.problemcase
+package cn.kzoj.dto.problemcase
 
 import kotlinx.serialization.Serializable
 

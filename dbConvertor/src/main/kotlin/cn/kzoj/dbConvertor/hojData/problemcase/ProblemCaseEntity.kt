@@ -5,8 +5,8 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 @Suppress("unused")
-class ProblemCaseDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object: IntEntityClass<ProblemCaseDAO>(ProblemCaseTable)
+class ProblemCaseEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object: IntEntityClass<ProblemCaseEntity>(ProblemCaseTable)
 
     var pid             by ProblemCaseTable.pid
     var input           by ProblemCaseTable.input

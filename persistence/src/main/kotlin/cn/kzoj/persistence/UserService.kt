@@ -3,8 +3,8 @@ package cn.kzoj.persistence
 import cn.kzoj.dto.exception.user.UserIdNotFoundException
 import cn.kzoj.dto.exception.user.UsernameDuplicatedException
 import cn.kzoj.dto.exception.user.UsernameNotFoundException
-import cn.kzoj.dto.entity.user.User
-import cn.kzoj.persistence.database.user.UserDAO
+import cn.kzoj.dto.user.User
+import cn.kzoj.persistence.database.user.UserEntity
 import cn.kzoj.persistence.database.user.UserTable
 import cn.kzoj.persistence.database.user.expose
 import cn.kzoj.persistence.database.user.exposeWithoutPasswd
@@ -32,7 +32,7 @@ class UserService(
     suspend fun createUser(newUser: User) =
         try {
             newSuspendedTransaction(context = Dispatchers.Default, db = database) {
-                UserDAO.new {
+                UserEntity.new {
                     username = newUser.username
                     encryptedPassword = newUser.plainPassword!! // TODO:加密
                     school = newUser.school
@@ -59,7 +59,7 @@ class UserService(
      */
     suspend fun queryUserByUUID(uuid: String): User =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            UserDAO.findById(UUID.fromString(uuid)).let {
+            UserEntity.findById(UUID.fromString(uuid)).let {
                 if (it == null) {
                     throw UserIdNotFoundException()
                 }
@@ -75,7 +75,7 @@ class UserService(
     suspend fun updateUser(newUser: User) {
         try {
             newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-                UserDAO.findByIdAndUpdate(UUID.fromString(newUser.uuid)) {
+                UserEntity.findByIdAndUpdate(UUID.fromString(newUser.uuid)) {
                     it.username = newUser.username
                     it.encryptedPassword = newUser.plainPassword!! // TODO:加密
                     it.school = newUser.school
@@ -98,7 +98,7 @@ class UserService(
      */
     suspend fun deleteUser(userId: String) {
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            UserDAO.findById(UUID.fromString(userId)).let {
+            UserEntity.findById(UUID.fromString(userId)).let {
                 if (it == null) {
                     throw UserIdNotFoundException()
                 }
@@ -113,7 +113,7 @@ class UserService(
      */
     suspend fun validate(username: String, password: String): String? =
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            UserDAO.find {
+            UserEntity.find {
                 UserTable.username eq username
             }.let {
                 if (it.empty()) {
@@ -144,7 +144,7 @@ class UserService(
         avatarFileInputStream.close()
 
         newSuspendedTransaction(context=Dispatchers.Default, db=database) {
-            UserDAO.findByIdAndUpdate(UUID.fromString(userId)) {
+            UserEntity.findByIdAndUpdate(UUID.fromString(userId)) {
                 it.avatarHashIndex = avatarHashIndex
             }
         }

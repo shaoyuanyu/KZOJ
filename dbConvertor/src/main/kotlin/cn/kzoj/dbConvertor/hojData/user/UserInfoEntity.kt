@@ -5,8 +5,8 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 @Suppress("unused")
-class UserInfoDAO(uuid: EntityID<String>) : Entity<String>(uuid) {
-    companion object: EntityClass<String, UserInfoDAO>(UserInfoTable)
+class UserInfoEntity(uuid: EntityID<String>) : Entity<String>(uuid) {
+    companion object: EntityClass<String, UserInfoEntity>(UserInfoTable)
 
     var username            by UserInfoTable.username
     var password            by UserInfoTable.password

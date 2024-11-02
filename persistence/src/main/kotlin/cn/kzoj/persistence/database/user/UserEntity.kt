@@ -1,13 +1,13 @@
 package cn.kzoj.persistence.database.user
 
-import cn.kzoj.dto.entity.user.User
+import cn.kzoj.dto.user.User
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import java.util.UUID
 
-class UserDAO(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
-    companion object: UUIDEntityClass<UserDAO>(UserTable)
+class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
+    companion object: UUIDEntityClass<UserEntity>(UserTable)
 
     var username                by UserTable.username
     var encryptedPassword       by UserTable.encryptedPassword
@@ -23,7 +23,7 @@ class UserDAO(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var utcUpdated              by UserTable.utcUpdated
 }
 
-fun UserDAO.expose(): User =
+fun UserEntity.expose(): User =
     User(
         uuid = this.id.value.toString(),
         username = this.username,
@@ -39,7 +39,7 @@ fun UserDAO.expose(): User =
         utcUpdated = this.utcUpdated
     )
 
-fun UserDAO.exposeWithoutPasswd(): User =
+fun UserEntity.exposeWithoutPasswd(): User =
     User(
         uuid = this.id.value.toString(),
         username = this.username,

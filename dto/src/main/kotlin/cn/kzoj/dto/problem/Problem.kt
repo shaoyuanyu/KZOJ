@@ -1,4 +1,4 @@
-package cn.kzoj.dto.entity.problem
+package cn.kzoj.dto.problem
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
