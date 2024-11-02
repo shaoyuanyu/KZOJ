@@ -78,7 +78,7 @@ $ docker compose up app
 容器编译并运行：
 
 ```shell
-$ docker compose up --build app
+$ docker compose up app --build
 ```
 
 ## 生产环境配置
