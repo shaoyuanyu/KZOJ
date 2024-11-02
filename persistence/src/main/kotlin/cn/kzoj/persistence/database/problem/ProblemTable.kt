@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object ProblemTable: IntIdTable("exposed_problem") {
+object ProblemTable: IntIdTable("problem") {
 
     val title: Column<String> = varchar("title", 100).index()
 
@@ -54,5 +54,5 @@ object ProblemTable: IntIdTable("exposed_problem") {
     /**
      * 最后修改时间，UTC
      */
-    val utcLastModified: Column<Instant> = timestamp("utc_last_modified")
+    val utcUpdated: Column<Instant> = timestamp("utc_updated")
 }

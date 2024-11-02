@@ -24,7 +24,7 @@ class ProblemEntity(id: EntityID<Int>) : IntEntity(id) {
     var status                  by ProblemTable.status
     var score                   by ProblemTable.score
     var utcCreated              by ProblemTable.utcCreated
-    var utcLastModified         by ProblemTable.utcLastModified
+    var utcUpdated              by ProblemTable.utcUpdated
 }
 
 fun ProblemEntity.expose(): Problem =
@@ -46,7 +46,7 @@ fun ProblemEntity.expose(): Problem =
         status = this.status,
         score = this.score,
         utcCreated = this.utcCreated,
-        utcLastModified = this.utcLastModified,
+        utcLastModified = this.utcUpdated,
     )
 
 fun List<ProblemEntity>.expose(): List<Problem> =

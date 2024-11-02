@@ -34,7 +34,7 @@ class ProblemService(
                 status = newProblem.status
                 score = newProblem.score
                 utcCreated = Clock.System.now()
-                utcLastModified = this.utcCreated
+                utcUpdated = this.utcCreated
             }
         }.id.value
 
@@ -68,7 +68,7 @@ class ProblemService(
                 it.tip = newProblem.tip
                 it.status = newProblem.status
                 it.score = newProblem.score
-                it.utcLastModified = Clock.System.now()
+                it.utcUpdated = Clock.System.now()
             }.let {
                 if (it == null) {
                     throw ProblemIdNotFoundException()
