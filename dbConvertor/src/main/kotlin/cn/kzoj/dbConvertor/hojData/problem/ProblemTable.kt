@@ -7,11 +7,11 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object ProblemTable: IntIdTable("problem") {
 
-    val problemId: Column<String> = text("problem_id")
+    val problemId: Column<String?> = text("problem_id").nullable()
 
-    val title: Column<String> = text("title")
+    val title: Column<String?> = text("title").nullable()
 
-    val author: Column<String> = text("author")
+    val author: Column<String?> = text("author").nullable()
 
     val problemType: Column<Int> = integer("problem_type")
 
@@ -21,21 +21,21 @@ object ProblemTable: IntIdTable("problem") {
 
     val stackLimit: Column<Long> = long("stack_limit")
 
-    val problemDescription: Column<String> = text("problem_description")
+    val problemDescription: Column<String?> = text("problem_description").nullable()
 
-    val inputDescription: Column<String> = text("input_description")
+    val inputDescription: Column<String?> = text("input_description").nullable()
 
-    val outputDescription: Column<String> = text("output_description")
+    val outputDescription: Column<String?> = text("output_description").nullable()
 
-    val examples: Column<String> = text("examples")
+    val examples: Column<String?> = text("examples").nullable()
 
     val isRemoteJudge: Column<Boolean> = bool("is_remote_judge")
 
-    val problemSource: Column<String> = text("problem_source")
+    val problemSource: Column<String?> = text("problem_source").nullable()
 
     val difficulty: Column<Int> = integer("difficulty")
 
-    val hint: Column<String> = text("hint")
+    val hint: Column<String?> = text("hint").nullable()
 
     val authority: Column<Int> = integer("authority")
 
@@ -43,9 +43,9 @@ object ProblemTable: IntIdTable("problem") {
 
     val isCodeSharable: Column<Boolean> = bool("is_code_sharable")
 
-    val judgeMode: Column<String> = text("judge_mode")
+    val judgeMode: Column<String?> = text("judge_mode").nullable()
 
-    val judgeCaseMode: Column<String> = text("judge_case_mode")
+    val judgeCaseMode: Column<String?> = text("judge_case_mode").nullable()
 
     val spjCode: Column<String?> = text("spj_code").nullable()
 
@@ -57,9 +57,9 @@ object ProblemTable: IntIdTable("problem") {
 
     val isCaseUploaded: Column<Boolean> = bool("is_case_uploaded")
 
-    val caseVersion: Column<String> = text("case_version")
+    val caseVersion: Column<String?> = text("case_version").nullable()
 
-    val lastModifiedByUser: Column<String> = text("last_modified_by_user")
+    val lastModifiedByUser: Column<String?> = text("last_modified_by_user").nullable()
 
     val isInGroup: Column<Boolean> = bool("is_in_group")
 
