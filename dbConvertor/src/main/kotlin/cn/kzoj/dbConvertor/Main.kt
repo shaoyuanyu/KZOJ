@@ -2,9 +2,18 @@ package cn.kzoj.dbConvertor
 
 import cn.kzoj.dbConvertor.hojData.configureHojDatabase
 import cn.kzoj.dbConvertor.hojData.problem.ProblemEntity
+import cn.kzoj.dbConvertor.hojData.user.UserInfoEntity
 import cn.kzoj.dto.problem.ProblemStatus
+import cn.kzoj.dto.user.UserAuthority
 import cn.kzoj.persistence.database.configureDatabase
+import cn.kzoj.persistence.database.user.UserEntity
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.toInstant
+import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
 /**
@@ -31,7 +40,13 @@ fun main() {
         password = System.getenv("KZOJ_PASSWORD")
     )
 
-    // problem & problem case
+    convertProblem(fromDatabase, toDatabase)
+    convertUser(fromDatabase, toDatabase)
+}
+
+
+// problem & problem case
+fun convertProblem(fromDatabase: Database, toDatabase: Database) {
     transaction(fromDatabase) {
         ProblemEntity.all().forEach { hojProblem ->
 
@@ -65,6 +80,43 @@ fun main() {
                     score = hojProblem.oiScore
                     utcCreated = Clock.System.now()
                     utcUpdated = this.utcCreated
+                }
+            }
+        }
+    }
+}
+
+
+// user
+@OptIn(FormatStringsInDatetimeFormats::class)
+fun convertUser(fromDatabase: Database, toDatabase: Database) {
+    val formatPattern = "yyyy-MM-dd' 'HH:mm:ss[.SSS]" // 从 hoj 读取 datetime 的格式化模板
+
+    transaction(fromDatabase) {
+        UserInfoEntity.all().forEach { hojUserInfo ->
+            transaction(toDatabase) {
+                UserEntity.new {
+                    username = hojUserInfo.username
+                    encryptedPassword = hojUserInfo.password
+                    school = hojUserInfo.school.toString()
+
+                    // TODO: 迁移后提醒学生填写grade
+                    grade = 0
+
+                    realName = hojUserInfo.realname.toString()
+                    gender = hojUserInfo.gender.toString()
+                    githubHomepage = hojUserInfo.github.toString()
+                    email = hojUserInfo.email.toString()
+                    avatarHashIndex = "default" // TODO: 默认头像
+
+                    //
+                    authority = UserAuthority.USER
+
+                    utcCreated = LocalDateTime.parse(
+                        input = hojUserInfo.gmtCreated,
+                        format = LocalDateTime.Format { byUnicodePattern(formatPattern) }
+                    ).toInstant(TimeZone.UTC)
+                    utcUpdated = Clock.System.now()
                 }
             }
         }

@@ -12,35 +12,35 @@ object UserInfoTable: IdTable<String>("user_info") {
 
     val password: Column<String> = text("password")
 
-    val nickname: Column<String> = text("nickname")
+    val nickname: Column<String?> = text("nickname").nullable()
 
-    val school: Column<String> = text("school")
+    val school: Column<String?> = text("school").nullable()
 
-    val course: Column<String> = text("course")
+    val course: Column<String?> = text("course").nullable()
 
-    val number: Column<String> = text("number")
+    val number: Column<String?> = text("number").nullable()
 
-    val realname: Column<String> = text("realname")
+    val realname: Column<String?> = text("realname").nullable()
 
-    val gender: Column<String> = text("gender")
+    val gender: Column<String?> = text("gender").nullable()
 
-    val github: Column<String> = text("github")
+    val github: Column<String?> = text("github").nullable()
 
-    val blog: Column<String> = text("blog")
+    val blog: Column<String?> = text("blog").nullable()
 
-    val cfUsername: Column<String> = text("cf_username")
+    val cfUsername: Column<String?> = text("cf_username").nullable()
 
-    val email: Column<String> = text("email")
+    val email: Column<String?> = text("email").nullable()
 
-    val avatar: Column<String> = text("avatar")
+    val avatar: Column<String?> = text("avatar").nullable()
 
-    val signature: Column<String> = text("signature")
+    val signature: Column<String?> = text("signature").nullable()
 
-    val titleName: Column<String> = text("title_name")
+    val titleName: Column<String?> = text("title_name").nullable()
 
-    val titleColor: Column<String> = text("title_color")
+    val titleColor: Column<String?> = text("title_color").nullable()
 
-    val status: Column<Int> = integer("status")
+    val status: Column<Int?> = integer("status").nullable()
 
     val gmtCreated: Column<String> = text("gmt_create")
 
