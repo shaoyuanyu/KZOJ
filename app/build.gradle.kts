@@ -28,6 +28,8 @@ dependencies {
     implementation(project(":persistence"))
     implementation(project(":judge"))
 
+    implementation(project(":dbConvertor"))
+
     implementation(libs.bundles.ktor.server)
     implementation(libs.exposed.core)
     implementation(libs.kotlinx.datetime)
