@@ -1,4 +1,4 @@
-package cn.kzoj.common.sandbox
+package cn.kzoj.judge
 
 object SandboxConfig {
     val c = CConfig()

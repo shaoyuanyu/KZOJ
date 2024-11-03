@@ -1,7 +1,5 @@
 package cn.kzoj.judge
 
-import cn.kzoj.common.sandbox.LanguageConfig
-import cn.kzoj.common.sandbox.SandboxConfig
 import cn.kzoj.dto.gojudge.CopyIn
 import cn.kzoj.dto.gojudge.File
 import cn.kzoj.dto.gojudge.GoJudgeCommand

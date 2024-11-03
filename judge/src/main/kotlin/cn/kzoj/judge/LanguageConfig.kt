@@ -1,4 +1,4 @@
-package cn.kzoj.common.sandbox
+package cn.kzoj.judge
 
 abstract class LanguageConfig {
     abstract val compileArgs: List<String>
