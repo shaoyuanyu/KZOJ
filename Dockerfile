@@ -4,9 +4,12 @@ RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME=/home/gradle/cache_home
 WORKDIR /home/gradle/app
 
-# 拷贝各模块gradle配置
-COPY build.gradle.kts gradle.properties settings.gradle.kts         ./
+# 拷贝项目gradle配置
+COPY settings.gradle.kts                                            ./
 COPY gradle/libs.versions.toml                                      ./gradle/
+COPY buildSrc/build.gradle.kts buildSrc/settings.gradle.kts         ./buildSrc/
+COPY buildSrc/src/main/kotlin/*                                     ./buildSrc/src/main/kotlin/
+# 拷贝各模块gradle配置
 COPY app/build.gradle.kts                                           ./app/
 COPY dbConvertor/build.gradle.kts                                   ./dbConvertor/
 COPY dto/build.gradle.kts                                           ./dto/

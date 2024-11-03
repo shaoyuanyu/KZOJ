@@ -1,13 +1,9 @@
 plugins {
-    kotlin("jvm") version libs.versions.kotlin
+    id("buildlogic.kotlin-library-conventions")
 }
 
 group = "cn.kzoj"
 version = "0.0.1"
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation(project(":dto"))

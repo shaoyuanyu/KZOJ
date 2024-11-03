@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version libs.versions.kotlin
+    id("buildlogic.kotlin-application-conventions")
     id("io.ktor.plugin") version libs.versions.ktor
     id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin
 }
@@ -21,10 +21,6 @@ ktor {
     docker {
         jreVersion.set(JavaVersion.VERSION_21)
     }
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
