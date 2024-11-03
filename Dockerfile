@@ -2,17 +2,17 @@
 FROM gradle:latest AS cache
 RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME=/home/gradle/cache_home
+WORKDIR /home/gradle/app
 
 # 拷贝各模块gradle配置
-COPY build.gradle.kts gradle.properties settings.gradle.kts /home/gradle/app/
-COPY gradle/libs.versions.toml /home/gradle/app/gradle/
-COPY app/build.gradle.kts /home/gradle/app/app/
-COPY dbConvertor/build.gradle.kts /home/gradle/app/dbConvertor/
-COPY dto/build.gradle.kts /home/gradle/app/dto/
-COPY judge/build.gradle.kts /home/gradle/app/judge/
-COPY persistence/build.gradle.kts /home/gradle/app/persistence/
+COPY build.gradle.kts gradle.properties settings.gradle.kts         ./
+COPY gradle/libs.versions.toml                                      ./gradle/
+COPY app/build.gradle.kts                                           ./app/
+COPY dbConvertor/build.gradle.kts                                   ./dbConvertor/
+COPY dto/build.gradle.kts                                           ./dto/
+COPY judge/build.gradle.kts                                         ./judge/
+COPY persistence/build.gradle.kts                                   ./persistence/
 
-WORKDIR /home/gradle/app
 RUN gradle clean build -i --stacktrace
 
 # Stage 2: Build Application
