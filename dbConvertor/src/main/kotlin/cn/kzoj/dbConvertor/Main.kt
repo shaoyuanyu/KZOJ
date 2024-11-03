@@ -37,8 +37,6 @@ internal val LOGGER = LoggerFactory.getLogger("cn.kzoj.dbConvertor")
  * HOJ_PROBLEM_CASE_PATH
  */
 fun main() {
-    println("test")
-
     // hoj 数据库
     val fromDatabase = configureHojDatabase(
         url = System.getenv("HOJ_URL"),
