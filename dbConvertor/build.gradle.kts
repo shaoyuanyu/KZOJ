@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "cn.kzoj"
-version = "0.0.1"
+version = "1.0.0"
 
 dependencies {
     dependencies {
