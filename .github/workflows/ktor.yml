@@ -1,0 +1,30 @@
+name: Ktor Build
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "master", "develop" ]
+
+
+jobs:
+
+  build:
+    name: Ktor build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'oracle'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Ktor application
+        run: ./gradlew assemble
